@@ -1,0 +1,1 @@
+"""Magnaporthe analysis pipeline package."""

@@ -1,0 +1,7 @@
+{
+  "name": "Magnaporthe Growth Analyzer",
+  "description": "Macroscopic image analysis tool for Magnaporthe petri dish growth, featuring ML-based segmentation, morphology, texture, and time-series growth tracking.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
