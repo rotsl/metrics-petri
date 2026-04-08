@@ -14,7 +14,7 @@ from .assets import assets_exist, get_assets_dir
 
 def _start_node_api(api_port: int) -> subprocess.Popen[str]:
     env = os.environ.copy()
-    env["PORT"] = str(api_port)
+    env["API_PORT"] = str(api_port)
 
     # Uses the existing dev API entrypoint.
     # This preserves your current server/ setup.

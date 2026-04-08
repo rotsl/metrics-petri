@@ -40,5 +40,8 @@ grayleafspot = "grayleafspot.cli:main"
 [tool.setuptools]
 include-package-data = true
 
+[tool.setuptools.package-data]
+grayleafspot = ["dist/**/*"]
+
 [tool.setuptools.packages.find]
 include = ["grayleafspot*", "pipeline*"]
