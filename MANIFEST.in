@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+recursive-include grayleafspot *.py
+recursive-include grayleafspot dist *
+recursive-include pipeline *.py
+recursive-include src *
+recursive-include server *

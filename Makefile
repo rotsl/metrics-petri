@@ -100,3 +100,14 @@ run-notebook: install
 
 run-lab: install
 	$(VENV_JUPYTER) lab $(NOTEBOOK_PATH)
+
+build-frontend: npm-deps
+	npm run build
+
+bundle-frontend: build-frontend
+	rm -rf grayleafspot/dist
+	mkdir -p grayleafspot/dist
+	cp -R dist/* grayleafspot/dist/
+
+build-package: bundle-frontend
+	$(VENV_PYTHON) -m build

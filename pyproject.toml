@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grayleafspot"
+version = "0.1.0"
+description = "Gray Leaf Spot analysis app"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "python-dotenv",
+  "requests",
+  "numpy",
+  "pandas",
+  "pillow",
+  "opencv-python",
+  "scikit-image",
+  "scipy",
+  "matplotlib",
+  "reportlab",
+  "torch",
+  "torchvision",
+  "transformers",
+  "accelerate",
+  "segment-anything",
+  "segmentation-models-pytorch",
+  "albumentations",
+  "huggingface_hub[cli]",
+  "mlx-vlm",
+  "ipykernel",
+  "ipywidgets",
+  "jupyterlab",
+  "notebook",
+]
+
+[project.scripts]
+grayleafspot = "grayleafspot.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["grayleafspot*", "pipeline*"]

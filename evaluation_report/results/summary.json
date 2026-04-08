@@ -1,0 +1,52 @@
+{
+  "num_images": 22,
+  "confidence_level": 0.95,
+  "metrics": {
+    "precision": {
+      "mean": 0.7272209668426268,
+      "std": 0.23449680917903154,
+      "min": 0.0,
+      "max": 0.9908098880616403,
+      "ci_lower": 0.6253570255959459,
+      "ci_upper": 0.8204262925459358
+    },
+    "recall": {
+      "mean": 0.9132736141612484,
+      "std": 0.21597303359117997,
+      "min": 0.0,
+      "max": 1.0,
+      "ci_lower": 0.810374439834551,
+      "ci_upper": 0.9789150923305169
+    },
+    "f1_score": {
+      "mean": 0.7988230781036306,
+      "std": 0.20964556185278155,
+      "min": 0.0,
+      "max": 0.9841959568874747,
+      "ci_lower": 0.7020397080176366,
+      "ci_upper": 0.8722807762923566
+    },
+    "iou": {
+      "mean": 0.701928231544693,
+      "std": 0.22975769350522576,
+      "min": 0.0,
+      "max": 0.968883677477597,
+      "ci_lower": 0.6011115903936485,
+      "ci_upper": 0.7910994172979561
+    }
+  },
+  "comparison_mode": "masks",
+  "requested_pairs": 24,
+  "missing_pairs": 2,
+  "missing_prediction_to_gt_matches": [
+    "0260220_P002_16FEB_SLN1_PCBM_+nacl_d06_TOP.png",
+    "0260220_P002_16FEB_SLN1_PCBM_-nacl_d06_TOP.png"
+  ],
+  "area_statistics": {
+    "mean_predicted_area_px": 467628.2727272727,
+    "mean_ground_truth_area_px": 405068.54545454547,
+    "mean_relative_area_error_pct": 38.05824896906138,
+    "median_relative_area_error_pct": 30.36022113609747,
+    "shape_alignment_rate": 0.7272727272727273
+  }
+}
