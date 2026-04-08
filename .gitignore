@@ -43,6 +43,7 @@ outputs/*
 archives/*
 !archives/.gitkeep
 !archives/
+evaluation_report/
 r_tag_test_output/
 tmp_r_tag_test.R
 .tag_test
