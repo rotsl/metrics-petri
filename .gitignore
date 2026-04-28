@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Environment / secrets
+.env*
+!.env.example
+*.local
+
+# Runtime artefacts
+.mplconfig/
+.cache/
+
+# Data directories (user-managed, not source)
+models/
+data/
+input_images/*
+!input_images/.gitkeep
+!input_images/
+outputs/*
+!outputs/.gitkeep
+!outputs/
+archives/*
+!archives/.gitkeep
+!archives/
+
+# Node (legacy frontend)
+node_modules/
+
+# macOS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.sw?

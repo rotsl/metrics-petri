@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metrics-petri"
+version = "1.0.3"
+description = "metrics-petri: petri dish colony segmentation and morphometric analysis"
+readme = "package.md"
+requires-python = ">=3.10"
+authors = [{ name = "Rohan R" }]
+maintainers = [{ name = "Rohan R" }]
+license = { text = "Apache-2.0" }
+keywords = [
+  "metrics-petri",
+  "petri dish",
+  "colony segmentation",
+  "image analysis",
+  "bioinformatics",
+  "machine learning",
+  "plant pathology",
+]
+dependencies = [
+  "Pillow>=10.0.0",
+  "pandas>=2.0.0",
+  "torch>=2.1.0",
+  "scikit-image>=0.22.0",
+  "scipy>=1.11.0",
+  "numpy>=1.24.0",
+  "opencv-python-headless>=4.8.0",
+  "matplotlib>=3.7.0",
+]
+
+[project.optional-dependencies]
+gui = [
+  "gradio>=5.0.0",
+  "pillow-heif>=0.16.0",
+]
+
+[project.scripts]
+metrics-petri     = "pipelinesam.cli:main"
+metrics-petri-gui = "pipeline.cli:main"
+
+[project.urls]
+Homepage   = "https://github.com/rotsl/metrics-petri"
+Repository = "https://github.com/rotsl/metrics-petri"
+Issues     = "https://github.com/rotsl/metrics-petri/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["pipeline*", "pipelinesam*"]
+
+[tool.setuptools.package-data]
+"pipeline"    = ["*.py"]
+"pipelinesam" = ["*.py", "notebooks/*.ipynb"]
