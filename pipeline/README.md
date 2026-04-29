@@ -12,7 +12,7 @@ No coding required. The full pipeline (UNet segmentation, dish detection, crack 
 pip install "metrics-petri[gui]"
 ```
 
-The `[gui]` extra adds Gradio and HEIF/RAW image support. The core package without the GUI is `pip install metrics-petri`.
+The `[gui]` extra adds Gradio and HEIF/RAW image support. If you only need the CLI, use `pip install metrics-petri`.
 
 ---
 
@@ -27,51 +27,92 @@ The interface opens in your default browser at `http://localhost:7860`.
 Options:
 
 ```bash
-metrics-petri-gui --port 8080              # change port
-metrics-petri-gui --host 127.0.0.1         # restrict to localhost
-metrics-petri-gui --no-browser             # don't open browser automatically
-metrics-petri-gui --model /path/to/model.pt  # custom UNet checkpoint
+metrics-petri-gui --port 8080               # change port
+metrics-petri-gui --host 127.0.0.1          # restrict to localhost only
+metrics-petri-gui --no-browser              # don't open browser automatically
+metrics-petri-gui --model /path/to/model.pt # custom UNet checkpoint
+```
+
+---
+
+## Model file lookup order
+
+At start-up the pipeline searches for the checkpoint in this order:
+
+1. `--model` flag or `UNET_MODEL` environment variable — if set, that path is used directly.
+2. `models/best_area_w_0.7.pt` relative to the current working directory (useful when running from the cloned repo).
+3. The installed package location — `importlib.resources` resolves the bundled file inside the wheel.
+4. HuggingFace Hub auto-download — if none of the above exist, the file is downloaded automatically from `rotsl/grayleafspot-segmentation` and cached locally.
+
+The bundled model is `best_area_w_0.7.pt` (SmallUNet, `base_channels=16`, ~23 MB). A normal `pip install "metrics-petri[gui]"` includes it; no separate download is needed.
+
+To override with a custom checkpoint:
+
+```bash
+UNET_MODEL=/path/to/checkpoint.pt metrics-petri-gui
 ```
 
 ---
 
 ## Interface walkthrough
 
-The GUI is organised as a five-step tab flow:
+The GUI is organised as a five-step tab flow.
 
-### 1. Upload Images
+### Step 1 — Upload Images
 
 Drag and drop or click to upload. Accepted formats: JPEG, PNG, TIFF, BMP, WebP, HEIF/HEIC, RAW (DNG, CR2, NEF, ARW).
 
-### 2. Settings
+### Step 2 — Settings
 
-- **Threshold** — segmentation confidence cutoff (default 0.5). Lower values include more of the colony; raise it to exclude dim edges.
-- **Fast mode** — runs segmentation only (no dish detection, cracks, or growth charts). Useful for a quick mask preview.
-- **Experiment name** — label for the run; appears in the report header.
+| Setting | Default | Description |
+| ------- | ------- | ----------- |
+| Threshold | 0.5 | Segmentation confidence cut-off. Lower values include more of the colony; raise it to exclude dim edges. |
+| Fast mode | off | Runs segmentation only (no dish detection, cracks, or growth charts). Useful for a quick mask preview. |
+| Experiment name | — | Label for the run; appears in the report header and ZIP filename. |
+| User name | — | Used to name the output ZIP (e.g. `rex.zip`). |
+| Plates | 1 | Number of plates in the experiment. |
 
-### 3. Review & Edit Dates
+### Step 3 — Review & Edit Dates
 
-A table shows each uploaded filename alongside editable `experiment_date` and `image_date` fields (YYYY-MM-DD). Filling in dates enables growth rate calculations. Leave blank to analyse morphology only.
+A table shows each uploaded filename alongside auto-detected `experiment_date` and `image_date` fields (`YYYY-MM-DD`).
 
-### 4. Export Metadata
+- Dates are auto-detected from the filename (`YYYYMMDD` pattern), EXIF `DateTimeOriginal`, or file modification time.
+- Edit any date by clicking the cell. Day codes (`d01`, `d02`, …) update automatically.
+- Filling in dates enables growth rate calculations and correctly labelled chart axes.
+- Leave blank to analyse morphology only.
 
-Download a `image_metadata.csv` that records the experiment name and dates. Re-upload this CSV in future sessions to skip manual date entry.
+### Step 4 — Export Metadata
 
-### 5. Run Inference
+Download `image_metadata.csv` (and optionally `image_metadata.json` / `reminders.ics`). Re-upload this file in a future session to skip manual date entry. The same file can also be passed to the CLI via `--metadata`.
 
-Click **Run pipeline**. The interface shows:
+### Step 5 — Run Inference
 
-- **Fast mode**: raw image, predicted mask, and colour overlay for each image.
-- **Full mode**: all of the above plus dish-circle detection, crack overlay, hyphal skeleton panels, and growth rate charts. A **Download results ZIP** button appears when the run completes.
+Click **Run pipeline**. Progress is shown per image.
+
+**Fast mode** outputs for each image:
+
+- Raw image
+- Predicted mask
+- Colour overlay
+
+**Full mode** additionally outputs:
+
+- Dish-circle detection overlay
+- Crack detection overlay
+- Hyphal skeleton panels (Frangi, Meijering, hybrid)
+- Growth rate charts (one per metric, day-code labels on x-axis)
+- **Download results ZIP** button
 
 ---
 
 ## Output ZIP (full mode)
 
 ```
-results.zip
-├── analysis_full.csv
-├── analysis_full.json
+<user_or_experiment_name>.zip
+├── analysis_full.csv         one row per image, all metrics
+├── analysis_full.json        same data as a JSON array
+├── image_metadata.csv        copy of the metadata used
+├── image_metadata.json       same metadata as JSON
 └── overlays/
     ├── image01_raw.jpg
     ├── image01_mask.jpg
@@ -80,23 +121,25 @@ results.zip
     └── ...
 ```
 
+The ZIP is named from the `user_name` field, falling back to `experiment_name`, then `analysis.zip`.
+
 ---
 
-## Custom model checkpoint
-
-Pass `--model` at launch or set the `UNET_MODEL` environment variable:
+## Diagnostics
 
 ```bash
-UNET_MODEL=/path/to/checkpoint.pt metrics-petri-gui
+metrics-petri-gui doctor
 ```
+
+Prints Python version, NumPy version (warns if 2.x), Torch version and accelerator, Gradio version, model path, and dependency health. Exits with code 1 if any issue is found.
 
 ---
 
 ## Requirements
 
 - Python ≥ 3.10
-- PyTorch ≥ 2.1
-- Gradio ≥ 5.0
+- PyTorch ≥ 2.1 (CPU is fine; MPS is used automatically on Apple Silicon)
+- Gradio ≥ 6.0
 
 All dependencies are installed with `pip install "metrics-petri[gui]"`.
 

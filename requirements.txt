@@ -1,4 +1,7 @@
 # Core (CLI + notebook)
+# Note: tkinter is part of the Python standard library and is NOT pip-installable.
+#   macOS / Windows: bundled with the official Python installer.
+#   Linux:           sudo apt install python3-tk  (or equivalent)
 Pillow>=10.0.0
 pandas>=2.0.0
 torch>=2.1.0

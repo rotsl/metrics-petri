@@ -40,8 +40,9 @@ gui = [
 ]
 
 [project.scripts]
-metrics-petri     = "pipelinesam.cli:main"
-metrics-petri-gui = "pipeline.cli:main"
+metrics-petri          = "pipelinesam.cli:main"
+metrics-petri-gui      = "pipeline.cli:main"
+metrics-petri-metadata = "pipelinesam.image_metadata_gui:main"
 
 [project.urls]
 Homepage   = "https://github.com/rotsl/metrics-petri"
