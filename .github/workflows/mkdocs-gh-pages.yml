@@ -30,50 +30,50 @@ jobs:
           cp pipeline/README.md docs/pipeline.md
           cp package.md docs/package.md
           cat <<EOF > mkdocs.yml
-site_name: Metrics Petri Packages
-nav:
-  - Pipeline: pipeline.md
-  - PipelineSAM: pipelinesam.md
-  - Python Package: package.md
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/rotsl/metrics-petri
-  footer: |
-    <hr/>
-    <div style='text-align:center;font-size:0.9em;'>
-      Developed by <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Rohan R</a> &mdash; <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Apache 2.0</a>
-    </div>
-extra_javascript: []
-extra_css: []
-markdown_extensions:
-  - toc
-  - tables
-  - admonition
-  - codehilite
-  - footnotes
-  - meta
-  - attr_list
-  - def_list
-  - pymdownx.superfences
-  - pymdownx.details
-  - pymdownx.tabbed
-  - pymdownx.emoji
-  - pymdownx.tasklist
-  - pymdownx.inlinehilite
-  - pymdownx.magiclink
-  - pymdownx.betterem
-  - pymdownx.caret
-  - pymdownx.mark
-  - pymdownx.tilde
-  - pymdownx.smartsymbols
-  - pymdownx.keys
-  - pymdownx.critic
-  - pymdownx.progressbar
-  - pymdownx.snippets
-  - pymdownx.arithmatex
-  - pymdownx.highlight
-EOF
+          site_name: Metrics Petri Packages
+          nav:
+            - Pipeline: pipeline.md
+            - PipelineSAM: pipelinesam.md
+            - Python Package: package.md
+          extra:
+            social:
+              - icon: fontawesome/brands/github
+                link: https://github.com/rotsl/metrics-petri
+            footer: |
+              <hr/>
+              <div style='text-align:center;font-size:0.9em;'>
+                Developed by <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Rohan R</a> &mdash; <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Apache 2.0</a>
+              </div>
+          extra_javascript: []
+          extra_css: []
+          markdown_extensions:
+            - toc
+            - tables
+            - admonition
+            - codehilite
+            - footnotes
+            - meta
+            - attr_list
+            - def_list
+            - pymdownx.superfences
+            - pymdownx.details
+            - pymdownx.tabbed
+            - pymdownx.emoji
+            - pymdownx.tasklist
+            - pymdownx.inlinehilite
+            - pymdownx.magiclink
+            - pymdownx.betterem
+            - pymdownx.caret
+            - pymdownx.mark
+            - pymdownx.tilde
+            - pymdownx.smartsymbols
+            - pymdownx.keys
+            - pymdownx.critic
+            - pymdownx.progressbar
+            - pymdownx.snippets
+            - pymdownx.arithmatex
+            - pymdownx.highlight
+          EOF
       - name: Build documentation
         run: mkdocs build
 
