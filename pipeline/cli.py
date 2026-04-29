@@ -85,6 +85,35 @@ def _run_doctor() -> None:
     print("✓  All checks passed")
 
 
+def _run_notebook() -> None:
+    import importlib.resources
+    import shutil
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    nb_name = "example_metrics-petri.ipynb"
+    dest = Path.cwd() / nb_name
+    if not dest.exists():
+        src = importlib.resources.files("pipelinesam") / "notebooks" / nb_name
+        shutil.copy(str(src), str(dest))
+        print(f"✓  Copied {nb_name} → {dest}")
+    else:
+        print(f"  {nb_name} already present at {dest}")
+
+    jupyter = shutil.which("jupyter")
+    if not jupyter:
+        print(
+            "error: 'jupyter' not found in PATH.\n"
+            "Install JupyterLab with:  pip install jupyterlab",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    print(f"  Launching: {jupyter} lab {nb_name}\n")
+    subprocess.run([jupyter, "lab", nb_name])
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="metrics-petri-gui",
@@ -103,6 +132,9 @@ def main() -> None:
     import sys
     if len(sys.argv) > 1 and sys.argv[1] == "doctor":
         _run_doctor()
+        return
+    if len(sys.argv) > 1 and sys.argv[1] == "notebook":
+        _run_notebook()
         return
 
     args = build_parser().parse_args()

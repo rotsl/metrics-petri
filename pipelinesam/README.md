@@ -121,7 +121,7 @@ If `--metadata` is not given, the CLI looks for `image_metadata.json` and then `
 
 ## Output ZIP structure
 
-```
+```text
 <user_or_experiment_name>.zip
 ├── analysis_full.csv         one row per image, all metrics
 ├── analysis_full.json        same data as a JSON array
@@ -145,7 +145,7 @@ The ZIP is named from the `user_name` field in the metadata (e.g. `rex.zip`), fa
 ## Metrics in analysis_full.csv
 
 | Column | Unit | Description |
-|--------|------|-------------|
+| ------ | ---- | ----------- |
 | `area_mm2` | mm² | Colony area |
 | `diameter_mm` | mm | Equivalent circle diameter |
 | `perimeter_mm` | mm | Colony perimeter |
@@ -180,14 +180,19 @@ Prints Python version, NumPy version (warns if 2.x), Torch version and accelerat
 
 ## Notebook walkthrough
 
-```python
-import importlib.resources, shutil, pathlib
+Run the notebook from any working directory. The command copies the notebook to the current directory and opens it in JupyterLab:
 
-src = importlib.resources.files("pipelinesam") / "notebooks" / "example_metrics-petri.ipynb"
-shutil.copy(src, pathlib.Path.cwd() / "example_metrics-petri.ipynb")
+```bash
+metrics-petri notebook
 ```
 
-Open `example_metrics-petri.ipynb` in JupyterLab or VS Code to trace each pipeline stage interactively.
+JupyterLab must be available in your environment:
+
+```bash
+pip install jupyterlab
+```
+
+The notebook uses `input_images/` and `outputs/` relative to the directory where JupyterLab is launched — no path editing needed. The UNet checkpoint is resolved automatically by the pipeline (bundled in the wheel, or downloaded from HuggingFace on first run).
 
 ---
 

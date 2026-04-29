@@ -157,14 +157,23 @@ Checks Python, NumPy (warns if 2.x), Torch, accelerator (MPS/CUDA/CPU), model pa
 
 ## Notebook walkthrough
 
-```python
-import importlib.resources, shutil, pathlib
+Run the interactive notebook from any working directory:
 
-src = importlib.resources.files("pipelinesam") / "notebooks" / "example_metrics-petri.ipynb"
-shutil.copy(src, pathlib.Path.cwd() / "example_metrics-petri.ipynb")
+```bash
+# if installed via pip install metrics-petri
+metrics-petri notebook
+
+# if installed via pip install "metrics-petri[gui]"
+metrics-petri-gui notebook
 ```
 
-Open `example_metrics-petri.ipynb` in JupyterLab or VS Code to trace each stage of the pipeline interactively.
+The command copies `example_metrics-petri.ipynb` to the current directory (if not already present) and opens it in JupyterLab. Install JupyterLab if needed:
+
+```bash
+pip install jupyterlab
+```
+
+The notebook uses `input_images/` and `outputs/` relative to the directory where it is launched. The UNet checkpoint is resolved automatically — no path editing required.
 
 ---
 

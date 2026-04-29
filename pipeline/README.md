@@ -107,7 +107,7 @@ Click **Run pipeline**. Progress is shown per image.
 
 ## Output ZIP (full mode)
 
-```
+```text
 <user_or_experiment_name>.zip
 ├── analysis_full.csv         one row per image, all metrics
 ├── analysis_full.json        same data as a JSON array
@@ -122,6 +122,24 @@ Click **Run pipeline**. Progress is shown per image.
 ```
 
 The ZIP is named from the `user_name` field, falling back to `experiment_name`, then `analysis.zip`.
+
+---
+
+## Notebook walkthrough
+
+Run the interactive notebook from any working directory:
+
+```bash
+metrics-petri-gui notebook
+```
+
+This copies `example_metrics-petri.ipynb` to the current directory (if not already present) and opens it in JupyterLab. JupyterLab must be available:
+
+```bash
+pip install jupyterlab
+```
+
+The notebook uses `input_images/` and `outputs/` relative to the directory where JupyterLab is launched. The UNet checkpoint is resolved automatically — no path editing required.
 
 ---
 
