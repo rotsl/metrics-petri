@@ -4,3 +4,5 @@ include CITATION.cff
 recursive-include pipeline *.py
 recursive-include pipelinesam *.py *.ipynb
 include notebooks/example_metrics-petri.ipynb
+include models/__init__.py
+include models/*.pt

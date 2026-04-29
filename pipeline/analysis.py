@@ -32,6 +32,9 @@ CONTAINER_MM = 90.0
 IMAGE_SIZE = 256
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
 
+_HF_REPO = "rotsl/grayleafspot-segmentation"
+_HF_FILE = "best_area_w_0.7.pt"
+
 _DEFAULT_MODEL_CANDIDATES = [
     Path("models/best_area_w_0.7.pt"),
     Path(__file__).resolve().parent.parent / "models" / "best_area_w_0.7.pt",
@@ -41,14 +44,44 @@ _DEFAULT_MODEL_CANDIDATES = [
 _model: SmallUNet | None = None
 
 
-def _resolve_model_path() -> Path:
+def _find_model_path() -> Path | None:
+    """Return model path if found locally (env var, repo root, bundled package).
+    Returns None without downloading — safe to call at import time.
+    """
     env = os.getenv("UNET_MODEL")
     if env:
-        return Path(env).expanduser().resolve()
+        p = Path(env).expanduser().resolve()
+        if p.exists():
+            return p
     for c in _DEFAULT_MODEL_CANDIDATES:
         if c.exists():
             return c.resolve()
-    return _DEFAULT_MODEL_CANDIDATES[-1].resolve()
+    try:
+        from importlib.resources import files
+        p = Path(str(files("models").joinpath(_HF_FILE)))
+        if p.exists():
+            return p
+    except Exception:
+        pass
+    return None
+
+
+def _resolve_model_path() -> Path:
+    """Return model path, auto-downloading from HuggingFace if not found locally."""
+    p = _find_model_path()
+    if p:
+        return p
+    try:
+        from huggingface_hub import hf_hub_download
+        print(f"[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…", flush=True)
+        cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE)
+        return Path(cached)
+    except Exception as exc:
+        raise FileNotFoundError(
+            "UNet checkpoint not found. Set UNET_MODEL=/path/to/best_area_w_0.7.pt "
+            "or run: make download-model\n"
+            f"HuggingFace download also failed: {exc}"
+        ) from exc
 
 
 def load_model() -> SmallUNet:

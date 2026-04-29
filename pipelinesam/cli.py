@@ -285,6 +285,79 @@ def _write_charts(df: pd.DataFrame, out_dir: Path) -> None:
         plt.close(fig)
 
 
+def _run_doctor() -> None:
+    import sys
+    rows: list[tuple[str, str]] = []
+    ok = True
+
+    v = sys.version_info
+    rows.append(("Python", f"{v.major}.{v.minor}.{v.micro}"))
+
+    try:
+        import numpy as np
+        nv = np.__version__
+        if int(nv.split(".")[0]) >= 2:
+            rows.append(("NumPy", f"{nv}  ⚠️  NumPy 2.x conflicts with PyTorch — run: pip install 'numpy<2'"))
+            ok = False
+        else:
+            rows.append(("NumPy", nv))
+    except ImportError:
+        rows.append(("NumPy", "MISSING"))
+        ok = False
+
+    try:
+        import torch
+        rows.append(("Torch", f"{torch.__version__} — OK"))
+        if torch.backends.mps.is_available():
+            rows.append(("MPS", "Available"))
+        elif torch.cuda.is_available():
+            rows.append(("CUDA", "Available"))
+        else:
+            rows.append(("Accelerator", "None (CPU)"))
+    except ImportError:
+        rows.append(("Torch", "MISSING"))
+        ok = False
+
+    try:
+        from pipelinesam.pipeline import _find_model_path
+        p = _find_model_path()
+        if p and p.exists():
+            mb = p.stat().st_size / 1_048_576
+            rows.append(("Model", f"{p} ({mb:.1f} MB) — OK"))
+        else:
+            rows.append(("Model", "Not found locally — will auto-download from HuggingFace on first run"))
+    except Exception as exc:
+        rows.append(("Model", f"Error: {exc}"))
+
+    dep_map = {"pandas": "pandas", "cv2": "opencv-python-headless",
+               "skimage": "scikit-image", "scipy": "scipy",
+               "matplotlib": "matplotlib", "PIL": "Pillow", "rawpy": "rawpy"}
+    missing = [pkg for mod, pkg in dep_map.items() if not _importable(mod)]
+    rows.append(("Dependencies", f"⚠️  Missing: {', '.join(missing)}" if missing else "Healthy"))
+    if missing:
+        ok = False
+
+    w = max(len(k) for k, _ in rows)
+    for label, value in rows:
+        print(f"{label:<{w}}  {value}")
+    print()
+    if ok:
+        print("✓  All checks passed")
+    else:
+        print("⚠️  Issues found — see above")
+        sys.exit(1)
+
+
+def _importable(mod: str) -> bool:
+    import importlib
+    try:
+        importlib.import_module(mod)
+        return True
+    except ImportError:
+        return False
+
+
+
 def run_batch(
     input_dir: Path,
     output_zip: Path,
@@ -427,6 +500,11 @@ def run_batch(
 
 
 def main() -> None:
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "doctor":
+        _run_doctor()
+        return
+
     parser = argparse.ArgumentParser(
         prog="metrics-petri",
         description="metrics-petri — petri dish colony analysis (no GUI)",

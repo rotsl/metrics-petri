@@ -8,7 +8,7 @@ VENV_JUPYTER := $(VENV_DIR)/bin/jupyter
 
 NOTEBOOK_PATH := notebooks/example_metrics-petri.ipynb
 UNET_MODEL    := models/best_area_w_0.7.pt
-MODEL_URL     := https://github.com/rotsl/metrics-petri/raw/main/models/best_area_w_0.7.pt
+MODEL_URL     := https://huggingface.co/rotsl/grayleafspot-segmentation/resolve/main/best_area_w_0.7.pt
 KERNEL_NAME   := metrics-petri
 INPUT         ?= input_images/
 

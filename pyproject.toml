@@ -26,10 +26,11 @@ dependencies = [
   "torch>=2.1.0",
   "scikit-image>=0.22.0",
   "scipy>=1.11.0",
-  "numpy>=1.24.0",
+  "numpy>=1.24.0,<2.0",
   "opencv-python-headless>=4.8.0",
   "matplotlib>=3.7.0",
   "rawpy>=0.21.0",
+  "huggingface_hub>=0.20.0",
 ]
 
 [project.optional-dependencies]
@@ -51,8 +52,9 @@ Issues     = "https://github.com/rotsl/metrics-petri/issues"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["pipeline*", "pipelinesam*"]
+include = ["pipeline*", "pipelinesam*", "models"]
 
 [tool.setuptools.package-data]
 "pipeline"    = ["*.py"]
 "pipelinesam" = ["*.py", "notebooks/*.ipynb"]
+"models"      = ["*.pt"]
