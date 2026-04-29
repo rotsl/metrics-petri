@@ -8,14 +8,22 @@ on:
         required: false
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,12 +37,21 @@ jobs:
       - name: Prepare docs directory
         run: |
           mkdir -p docs
+          cat <<EOF > docs/index.md
+          # Metrics Petri Packages
+
+          - [Pipeline](pipeline/)
+          - [PipelineSAM](pipelinesam/)
+          - [Python Package](package/)
+          EOF
           cp pipelinesam/README.md docs/pipelinesam.md
           cp pipeline/README.md docs/pipeline.md
           cp package.md docs/package.md
           cat <<EOF > mkdocs.yml
           site_name: Metrics Petri Packages
+          site_url: https://rotsl.github.io/metrics-petri/
           nav:
+            - Home: index.md
             - Pipeline: pipeline.md
             - PipelineSAM: pipelinesam.md
             - Python Package: package.md
@@ -80,10 +97,11 @@ jobs:
       - name: Build documentation
         run: mkdocs build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
-          publish_branch: gh-pages
-          force_orphan: true
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
