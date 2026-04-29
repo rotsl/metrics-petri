@@ -8,10 +8,11 @@ VENV_JUPYTER := $(VENV_DIR)/bin/jupyter
 
 NOTEBOOK_PATH := notebooks/example_metrics-petri.ipynb
 UNET_MODEL    := models/best_area_w_0.7.pt
+MODEL_URL     := https://github.com/rotsl/metrics-petri/raw/main/models/best_area_w_0.7.pt
 KERNEL_NAME   := metrics-petri
 INPUT         ?= input_images/
 
-.PHONY: all setup install install-gui install-release-tools register-kernel \
+.PHONY: all setup download-model install install-gui install-release-tools register-kernel \
         model-status run-gui run-cli run-notebook run-lab \
         build-package publish-testpypi publish-pypi clean
 
@@ -27,11 +28,29 @@ setup:
 	$(VENV_PIP) install --upgrade pip setuptools wheel
 	@echo "Virtual environment ready at $(VENV_DIR)"
 
-install: setup
+# ── model checkpoint ───────────────────────────────────────────────────────────
+
+download-model:
+	@mkdir -p models
+	@if [ -f "$(UNET_MODEL)" ]; then \
+		echo "  ✓  Model present: $(UNET_MODEL)"; \
+	else \
+		echo "  ↓  Downloading UNet checkpoint from GitHub…"; \
+		curl -fL --progress-bar -o "$(UNET_MODEL)" "$(MODEL_URL)"; \
+		echo "  ✓  Saved to $(UNET_MODEL)"; \
+	fi
+
+model-status:
+	@echo "UNet checkpoint: $(UNET_MODEL)"
+	@if [ -f "$(UNET_MODEL)" ]; then echo "  ✓  present"; else echo "  ✗  MISSING — run: make download-model"; fi
+
+# ── install ────────────────────────────────────────────────────────────────────
+
+install: setup download-model
 	$(VENV_PIP) install -e .
 	$(MAKE) register-kernel
 
-install-gui: setup
+install-gui: setup download-model
 	$(VENV_PIP) install -e ".[gui]"
 	$(MAKE) register-kernel
 
@@ -42,12 +61,6 @@ register-kernel: setup
 	$(VENV_PYTHON) -m ipykernel install --user \
 		--name "$(KERNEL_NAME)" \
 		--display-name "Python ($(KERNEL_NAME))"
-
-# ── model ──────────────────────────────────────────────────────────────────────
-
-model-status:
-	@echo "UNet checkpoint: $(UNET_MODEL)"
-	@if [ -f "$(UNET_MODEL)" ]; then echo "  present"; else echo "  MISSING"; fi
 
 # ── run ────────────────────────────────────────────────────────────────────────
 

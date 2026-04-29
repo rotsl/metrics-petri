@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metrics-petri"
-version = "1.0.3"
+version = "0.0.1"
 description = "metrics-petri: petri dish colony segmentation and morphometric analysis"
 readme = "package.md"
 requires-python = ">=3.10"
@@ -29,11 +29,12 @@ dependencies = [
   "numpy>=1.24.0",
   "opencv-python-headless>=4.8.0",
   "matplotlib>=3.7.0",
+  "rawpy>=0.21.0",
 ]
 
 [project.optional-dependencies]
 gui = [
-  "gradio>=5.0.0",
+  "gradio>=6.0.0",
   "pillow-heif>=0.16.0",
 ]
 

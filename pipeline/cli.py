@@ -26,12 +26,13 @@ def main() -> None:
     if args.model:
         os.environ["UNET_MODEL"] = args.model
 
-    from .app import demo
+    from .app import demo, CSS
 
     demo.launch(
         server_name=args.host,
         server_port=args.port,
         inbrowser=not args.no_browser,
+        css=CSS,
     )
 
 

@@ -19,15 +19,13 @@ The repository ships two entry points:
 
 - Python 3.10 or later
 - `make` (standard on macOS/Linux)
-- The UNet checkpoint `models/best_area_w_0.7.pt` (see below)
 
 ### Clone and install
 
 ```bash
 git clone https://github.com/rotsl/metrics-petri.git
 cd metrics-petri
-make setup          # create venv + install all Python deps
-make install        # install package in editable mode
+make install        # create venv, install deps, verify model checkpoint
 ```
 
 To include the Gradio GUI:
@@ -36,18 +34,20 @@ To include the Gradio GUI:
 make install-gui
 ```
 
+`make install` / `make install-gui` each: create a virtual environment, install Python dependencies, and download the UNet checkpoint to `models/best_area_w_0.7.pt` if it is not already present.
+
 ### Model checkpoint
 
-The checkpoint is not tracked in the repository. Place it at:
-
-```text
-models/best_area_w_0.7.pt
-```
-
-If you have it elsewhere:
+The checkpoint `models/best_area_w_0.7.pt` is tracked in this repository and downloaded automatically by `make install`. To fetch it independently:
 
 ```bash
-UNET_MODEL=/path/to/best_area_w_0.7.pt make run-cli INPUT=input_images/
+make download-model
+```
+
+To use a custom checkpoint:
+
+```bash
+UNET_MODEL=/path/to/checkpoint.pt make run-cli INPUT=input_images/
 ```
 
 ---
@@ -68,7 +68,7 @@ metrics-petri input_images/ --metadata input_images/image_metadata.csv
 metrics-petri input_images/ --threshold 0.45
 ```
 
-Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, and per-image overlays.
+Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, per-image overlays, and growth-curve charts with day codes on the x-axis.
 
 Full CLI documentation: [`pipelinesam/README.md`](pipelinesam/README.md)
 
@@ -102,15 +102,15 @@ Opens `notebooks/example_metrics-petri.ipynb`, which traces the full pipeline in
 
 | Target | Description |
 | --- | --- |
-| `make setup` | Create virtual environment and install core dependencies |
-| `make install` | Install in editable mode (core, no GUI) |
-| `make install-gui` | Install with Gradio GUI extras |
+| `make install` | Create venv, install deps, download model (no GUI) |
+| `make install-gui` | Same, plus Gradio GUI extras |
+| `make download-model` | Download UNet checkpoint to `models/` if missing |
+| `make model-status` | Check whether the checkpoint is present |
 | `make run-gui` | Launch Gradio interface |
 | `make run-cli INPUT=path/` | Run batch CLI on a folder |
 | `make run-notebook` | Open the example notebook in JupyterLab |
 | `make build-package` | Build wheel and sdist for PyPI |
 | `make publish-pypi` | Upload to PyPI with twine |
-| `make model-status` | Check whether the checkpoint is present |
 | `make clean` | Remove venv, caches, build artefacts |
 
 ---
@@ -132,7 +132,7 @@ metrics-petri/
 │   └── notebooks/      # Notebook shipped with the package
 ├── notebooks/          # Development notebooks
 │   └── example_metrics-petri.ipynb
-├── models/             # Local model checkpoints (gitignored)
+├── models/             # UNet checkpoint (tracked in repo)
 │   └── best_area_w_0.7.pt
 ├── input_images/       # Source images (gitignored)
 ├── outputs/            # Analysis outputs (gitignored)
@@ -166,7 +166,7 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 Apache 2.0 — see [`LICENSE`](LICENSE).
 
 ```text
-Metrics Petri: petri dish colony segmentation and morphometric analysis. 2026.
+Metrics Petri: petri dish colony segmentation and morphometric analysis. Rohan R, 2026.
 https://github.com/rotsl/metrics-petri
 ```
 

@@ -14,7 +14,6 @@ build/
 
 # Environment / secrets
 .env*
-!.env.example
 *.local
 
 # Runtime artefacts
@@ -22,7 +21,6 @@ build/
 .cache/
 
 # Data directories (user-managed, not source)
-models/
 data/
 input_images/*
 !input_images/.gitkeep
@@ -33,6 +31,9 @@ outputs/*
 archives/*
 !archives/.gitkeep
 !archives/
+
+# Model artefacts inside models/
+models/.DS_Store
 
 # Node (legacy frontend)
 node_modules/

@@ -42,13 +42,22 @@ def _metric(result: dict, *keys: str, default: float = 0.0) -> float:
         return default
 
 
+def _dc_to_num(day_code_str: object, fallback: int = 0) -> int:
+    if isinstance(day_code_str, str) and day_code_str.startswith("d") and day_code_str[1:].isdigit():
+        return int(day_code_str[1:])
+    return fallback
+
+
 def _build_dataframe(results: list[dict]) -> pd.DataFrame:
     rows: list[dict] = []
     for r in results:
+        dc = r.get("day_code", "")
+        day_num = _dc_to_num(dc) or int(r.get("day") or r.get("days_since_start") or 0)
         rows.append(
             {
                 "filename": r.get("filename") or r.get("image_path", ""),
-                "day": int(r.get("day") or r.get("days_since_start") or 0),
+                "day": day_num,
+                "day_code": str(dc) if dc else "",
                 "area": _metric(r, "area_mm2") or _metric(r, "morphology", "areaMm2"),
                 "diameter": _metric(r, "diameter_mm") or _metric(r, "morphology", "diameterMm"),
                 "perimeter": _metric(r, "perimeter_mm") or _metric(r, "morphology", "perimeterMm"),
@@ -81,6 +90,13 @@ def _save_figure(fig: Figure, path: Path) -> None:
     plt.close(fig)
 
 
+def _make_x_label(dc_val: object, day_num: int) -> str:
+    dc = str(dc_val) if dc_val else ""
+    if dc.startswith("d") and dc[1:].isdigit():
+        return dc
+    return f"d{day_num:02d}" if day_num > 0 else "d?"
+
+
 def _plot_lines(
     ax: Any,
     df: pd.DataFrame,
@@ -92,10 +108,16 @@ def _plot_lines(
     if df.empty:
         ax.text(0.5, 0.5, "No data available", ha="center", va="center")
     else:
+        x = df["day"].tolist()
+        dc_col = df["day_code"] if "day_code" in df.columns else pd.Series([""] * len(df))
+        x_labels = [_make_x_label(dc, int(d)) for dc, d in zip(dc_col, df["day"])]
         for key, label, color in columns:
-            ax.plot(df["day"], df[key], marker="o", linewidth=2, label=label, color=color)
+            ax.plot(x, df[key].tolist(), marker="o", linewidth=2, label=label, color=color)
+        ax.set_xticks(x)
+        ax.set_xticklabels(x_labels, rotation=30 if len(x_labels) > 6 else 0, fontsize=8)
         ax.legend(fontsize=8)
         ax.grid(alpha=0.25)
+        xlabel = "Day"
     ax.set_title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)

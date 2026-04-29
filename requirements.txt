@@ -1,6 +1,5 @@
-# Core runtime (no GUI)
+# Core (CLI + notebook)
 Pillow>=10.0.0
-gradio>=5.0.0
 pandas>=2.0.0
 torch>=2.1.0
 scikit-image>=0.22.0
@@ -8,5 +7,8 @@ scipy>=1.11.0
 numpy>=1.24.0
 opencv-python-headless>=4.8.0
 matplotlib>=3.7.0
-pillow-heif>=0.16.0
 rawpy>=0.21.0
+
+# GUI extras — install with: pip install "metrics-petri[gui]"
+gradio>=6.0.0
+pillow-heif>=0.16.0

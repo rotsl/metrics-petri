@@ -24,11 +24,71 @@ from scipy import ndimage
 from skimage import filters, measure, morphology
 from skimage.filters import threshold_local
 
-IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp"}
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+IMAGE_EXTS = {
+    ".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp", ".gif",
+    ".heic", ".heif", ".dng", ".cr2", ".nef", ".arw", ".raf", ".orf", ".rw2",
+}
+
+
+def _detect_image_date(path: Path) -> str:
+    """Return ISO date string from EXIF DateTimeOriginal or filename YYYYMMDD pattern.
+
+    Returns empty string when no reliable date can be found. File mtime is not
+    used — it reflects copy/download time, not capture time.
+    """
+    import re as _re
+    from PIL import ExifTags as _ExifTags
+    _DATE_RE = _re.compile(r"(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])")
+    # 1. EXIF DateTimeOriginal
+    try:
+        import datetime as _dt
+        im = Image.open(path)
+        ex = im.getexif()
+        if ex:
+            for tid, tn in _ExifTags.TAGS.items():
+                if tn == "DateTimeOriginal":
+                    v = ex.get(tid)
+                    if v:
+                        return _dt.datetime.strptime(v, "%Y:%m:%d %H:%M:%S").date().isoformat()
+    except Exception:
+        pass
+    # 2. YYYYMMDD in filename
+    m = _DATE_RE.search(path.stem)
+    if m:
+        try:
+            import datetime as _dt
+            return _dt.date(int(m[1]), int(m[2]), int(m[3])).isoformat()
+        except Exception:
+            pass
+    return ""
 
 
 def _find_images(root: Path) -> list[Path]:
     return sorted(p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_EXTS)
+
+
+def _load_as_pil(path: Path) -> Image.Image:
+    """Open any supported image format and return an RGB PIL image."""
+    suffix = path.suffix.lower()
+    if suffix in {".heic", ".heif"}:
+        try:
+            import pillow_heif
+            pillow_heif.register_heif_opener()
+        except ImportError:
+            pass
+    if suffix in {".dng", ".cr2", ".nef", ".arw", ".raf", ".orf", ".rw2", ".raw"}:
+        try:
+            import rawpy
+            with rawpy.imread(str(path)) as raw:
+                rgb = raw.postprocess()
+            return Image.fromarray(rgb)
+        except Exception:
+            pass
+    return Image.open(path).convert("RGB")
 
 
 def _generate_overlays(
@@ -102,7 +162,7 @@ def _process_image(
     from skimage import exposure
 
     model = get_model()
-    img_pil = Image.open(img_path).convert("RGB")
+    img_pil = _load_as_pil(img_path)
     img = np.array(img_pil)
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     h, w = img.shape[:2]
@@ -183,6 +243,48 @@ def _process_image(
     return metrics, overlays
 
 
+def _x_label_for(dc_val: object, day_num: int) -> str:
+    dc = str(dc_val) if dc_val else ""
+    if dc.startswith("d") and dc[1:].isdigit():
+        return dc
+    return f"d{day_num:02d}" if day_num > 0 else "d?"
+
+
+def _write_charts(df: pd.DataFrame, out_dir: Path) -> None:
+    """Write growth-curve PNGs to out_dir using day_code on the x-axis."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    for col in ("area_mm2", "diameter_mm", "crack_coverage_pct", "crack_count",
+                "edge_roughness", "entropy", "rgr_per_day", "relative_growth_per_day"):
+        if col not in df.columns:
+            continue
+        sub = df[["days_since_start", "day_code", col]].copy() if "day_code" in df.columns \
+            else df[["days_since_start", col]].copy()
+        sub[col] = pd.to_numeric(sub[col], errors="coerce")
+        sub = sub.dropna(subset=[col])
+        if len(sub) < 2:
+            continue
+
+        sort_col = "days_since_start" if "days_since_start" in sub.columns else sub.columns[0]
+        sub = sub.sort_values(sort_col).reset_index(drop=True)
+
+        x = sub[sort_col].tolist()
+        dc_col = sub["day_code"] if "day_code" in sub.columns else pd.Series([""] * len(sub))
+        x_labels = [_x_label_for(dc, int(d)) for dc, d in zip(dc_col, x)]
+
+        fig, ax = plt.subplots(figsize=(8, 4))
+        ax.plot(x, sub[col].tolist(), "o-", linewidth=2, markersize=7, color="#4f46e5")
+        ax.set_xticks(x)
+        ax.set_xticklabels(x_labels, rotation=30 if len(x_labels) > 6 else 0, fontsize=8)
+        ax.set_xlabel("Day")
+        ax.set_ylabel(col.replace("_", " "))
+        ax.set_title(col.replace("_", " ").title())
+        ax.grid(True, alpha=0.3)
+        fig.tight_layout()
+        fig.savefig(out_dir / f"{col}.png", dpi=150, bbox_inches="tight")
+        plt.close(fig)
+
+
 def run_batch(
     input_dir: Path,
     output_zip: Path,
@@ -190,7 +292,11 @@ def run_batch(
     metadata_csv: Path | None = None,
 ) -> None:
     if metadata_csv and metadata_csv.exists():
-        meta_df = pd.read_csv(metadata_csv)
+        if metadata_csv.suffix.lower() == ".json":
+            import json as _json
+            meta_df = pd.DataFrame(_json.loads(metadata_csv.read_text(encoding="utf-8")))
+        else:
+            meta_df = pd.read_csv(metadata_csv)
         for col in ("experiment_name", "experiment_date", "image_date", "day_code", "user_name", "plates_count"):
             if col not in meta_df.columns:
                 meta_df[col] = ""
@@ -201,7 +307,21 @@ def run_batch(
         ]
     else:
         paths = _find_images(input_dir)
-        tasks = [(p, {"image_path": str(p.relative_to(input_dir))}) for p in paths]
+        # Auto-detect image dates; anchor experiment_date to earliest found date
+        raw_dates = {p: _detect_image_date(p) for p in paths}
+        known = [d for d in raw_dates.values() if d]
+        auto_exp_date = min(known) if known else ""
+        tasks = [
+            (
+                p,
+                {
+                    "image_path": str(p.relative_to(input_dir)),
+                    "image_date": raw_dates[p],
+                    "experiment_date": auto_exp_date,
+                },
+            )
+            for p in paths
+        ]
 
     if not tasks:
         raise FileNotFoundError(f"No images found in {input_dir}")
@@ -221,35 +341,62 @@ def run_batch(
             print(f"    WARNING: {exc}", file=sys.stderr, flush=True)
             results.append({**meta, "error": str(exc)})
 
+    def _dc_to_num(s: object, fallback: int = 0) -> int:
+        if isinstance(s, str) and s.startswith("d") and s[1:].isdigit():
+            return int(s[1:])
+        return fallback
+
     df = pd.DataFrame(results)
 
-    # Growth-rate calculations when date metadata is present
+    # days_since_start: prefer numeric value from day_code column (set by the user
+    # in the GUI or metadata CSV); fall back to (image_date - experiment_date) arithmetic.
+    if "day_code" in df.columns:
+        dc_nums = df["day_code"].apply(_dc_to_num)
+        df["days_since_start"] = dc_nums
+    elif "image_date" in df.columns and "experiment_date" in df.columns:
+        _id = pd.to_datetime(df["image_date"], errors="coerce")
+        _ed = pd.to_datetime(df["experiment_date"], errors="coerce")
+        df["days_since_start"] = (_id - _ed).dt.days.fillna(0).astype(int) + 1
+
+    # Growth-rate calculations using actual calendar-day intervals between images
     if "image_date" in df.columns and "experiment_date" in df.columns:
         df["image_date"] = pd.to_datetime(df["image_date"], errors="coerce")
         df["experiment_date"] = pd.to_datetime(df["experiment_date"], errors="coerce")
-        df["days_since_start"] = (df["image_date"] - df["experiment_date"]).dt.days
-        sort_cols = (
-            ["experiment_name", "image_date"]
-            if "experiment_name" in df.columns
-            else ["image_date"]
-        )
+        # Sort by day_code numeric value so rows are in chronological order
+        if "days_since_start" in df.columns:
+            sort_cols = (
+                ["experiment_name", "days_since_start"]
+                if "experiment_name" in df.columns
+                else ["days_since_start"]
+            )
+        else:
+            sort_cols = (
+                ["experiment_name", "image_date"]
+                if "experiment_name" in df.columns
+                else ["image_date"]
+            )
         df = df.sort_values(sort_cols)
         df["rgr_per_day"] = float("nan")
         df["relative_growth_per_day"] = float("nan")
-        if "experiment_name" in df.columns:
-            for _, g in df.groupby("experiment_name"):
-                g = g.sort_values("image_date")
-                for j in range(1, len(g)):
-                    dt = (g.iloc[j]["image_date"] - g.iloc[j - 1]["image_date"]).days
-                    a1 = g.iloc[j - 1].get("area_mm2") or 0
-                    a2 = g.iloc[j].get("area_mm2") or 0
-                    if dt > 0 and a1 > 0 and a2 > 0:
-                        df.loc[g.index[j], "rgr_per_day"] = (
-                            math.log(float(a2)) - math.log(float(a1))
-                        ) / dt
-                        df.loc[g.index[j], "relative_growth_per_day"] = (
-                            float(a2) - float(a1)
-                        ) / dt
+        grp_col = "experiment_name" if "experiment_name" in df.columns else None
+        groups = df.groupby(grp_col) if grp_col else [(None, df)]
+        for _, g in groups:
+            g = g.sort_values("days_since_start" if "days_since_start" in g.columns else "image_date")
+            for j in range(1, len(g)):
+                # Use actual calendar days for rate math, not just day-code difference
+                try:
+                    dd = int((g.iloc[j]["image_date"] - g.iloc[j - 1]["image_date"]).days)
+                except Exception:
+                    dd = int(g.iloc[j].get("days_since_start", j) - g.iloc[j - 1].get("days_since_start", j - 1))
+                a1 = g.iloc[j - 1].get("area_mm2") or 0
+                a2 = g.iloc[j].get("area_mm2") or 0
+                if dd > 0 and a1 > 0 and a2 > 0:
+                    df.loc[g.index[j], "rgr_per_day"] = (
+                        math.log(float(a2)) - math.log(float(a1))
+                    ) / dd
+                    df.loc[g.index[j], "relative_growth_per_day"] = (
+                        float(a2) - float(a1)
+                    ) / dd
 
     # Write zip
     tmp = Path(tempfile.mkdtemp())
@@ -263,11 +410,16 @@ def run_batch(
     for name, img_pil in all_overlays.items():
         img_pil.save(overlays_dir / name, quality=92)
 
+    charts_dir = tmp / "charts"
+    _write_charts(df, charts_dir)
+
     with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.write(csv_p, "analysis_full.csv")
         zf.write(json_p, "analysis_full.json")
         for f in sorted(overlays_dir.glob("*.jpg")):
             zf.write(f, f"overlays/{f.name}")
+        for f in sorted(charts_dir.glob("*.png")):
+            zf.write(f, f"charts/{f.name}")
 
     ok = sum(1 for r in results if "error" not in r)
     print(f"\n✓  {ok}/{len(results)} images analysed")
@@ -298,7 +450,7 @@ def main() -> None:
         "--metadata",
         "-m",
         default=None,
-        help="Path to image_metadata.csv",
+        help="Path to image_metadata.csv or image_metadata.json",
     )
     parser.add_argument(
         "--model",
@@ -321,11 +473,12 @@ def main() -> None:
     if output_zip.suffix.lower() != ".zip":
         output_zip = output_zip.with_suffix(".zip")
 
-    metadata_csv = (
-        Path(args.metadata).expanduser().resolve()
-        if args.metadata
-        else input_dir / "image_metadata.csv"
-    )
+    if args.metadata:
+        metadata_csv = Path(args.metadata).expanduser().resolve()
+    elif (input_dir / "image_metadata.json").exists():
+        metadata_csv = input_dir / "image_metadata.json"
+    else:
+        metadata_csv = input_dir / "image_metadata.csv"
 
     try:
         run_batch(input_dir, output_zip, threshold=args.threshold, metadata_csv=metadata_csv)

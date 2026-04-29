@@ -357,6 +357,13 @@ def _fig_to_pil(fig) -> Image.Image:
     return img
 
 
+def _dc_to_num(day_code_str: object, fallback: int = 0) -> int:
+    """Convert 'd07' → 7.  Returns fallback for anything unparseable."""
+    if isinstance(day_code_str, str) and day_code_str.startswith("d") and day_code_str[1:].isdigit():
+        return int(day_code_str[1:])
+    return fallback
+
+
 def make_growth_charts(results: list[dict]) -> list[tuple[Image.Image, str]]:
     if len(results) < 2:
         return []
@@ -379,7 +386,34 @@ def make_growth_charts(results: list[dict]) -> list[tuple[Image.Image, str]]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    df = df.sort_values("days_since_start").reset_index(drop=True)
+    # Build a numeric sort key from day_code ("d07" → 7); fall back to days_since_start
+    if "day_code" in df.columns:
+        df["_day_num"] = df["day_code"].apply(_dc_to_num)
+        if "days_since_start" in df.columns:
+            mask = df["_day_num"] == 0
+            df.loc[mask, "_day_num"] = df.loc[mask, "days_since_start"].fillna(0).astype(int)
+    elif "days_since_start" in df.columns:
+        df["_day_num"] = df["days_since_start"].fillna(0).astype(int)
+    else:
+        df["_day_num"] = range(len(df))
+
+    df = df.sort_values("_day_num").reset_index(drop=True)
+
+    # Build an x-axis label for every row: use day_code when valid, else construct dXX from number
+    def _make_x_label(dc_val, day_num: int) -> str:
+        dc = str(dc_val) if dc_val else ""
+        if dc.startswith("d") and dc[1:].isdigit():
+            return dc
+        return f"d{day_num:02d}" if day_num > 0 else "d?"
+
+    df["_x_label"] = [
+        _make_x_label(dc, int(n))
+        for dc, n in zip(
+            df.get("day_code", pd.Series([""] * len(df))),
+            df["_day_num"],
+        )
+    ]
+
     charts: list[tuple[Image.Image, str]] = []
 
     chart_defs = [
@@ -407,12 +441,16 @@ def make_growth_charts(results: list[dict]) -> list[tuple[Image.Image, str]]:
         valid = df[col].notna() & (df[col].astype(str).str.strip() != "")
         if valid.sum() < 2:
             continue
-        sub = df.loc[valid].copy()
+        sub = df.loc[valid].sort_values("_day_num").reset_index(drop=True).copy()
+        x = sub["_day_num"].tolist()
+        x_labels = sub["_x_label"].tolist()
         fig, ax = plt.subplots(figsize=(8, 4))
-        ax.plot(sub["days_since_start"], sub[col], f"{marker}-", color=color, lw=2, ms=8)
+        ax.plot(x, sub[col].tolist(), f"{marker}-", color=color, lw=2, ms=8)
         if fill:
-            ax.fill_between(sub["days_since_start"], 0, sub[col], alpha=0.15, color=color)
-        ax.set(xlabel="Days", ylabel=ylabel, title=title)
+            ax.fill_between(x, 0, sub[col].tolist(), alpha=0.15, color=color)
+        ax.set_xticks(x)
+        ax.set_xticklabels(x_labels, rotation=30 if len(x_labels) > 6 else 0, fontsize=8)
+        ax.set(xlabel="Day", ylabel=ylabel, title=title)
         ax.grid(True, alpha=0.3)
         charts.append((_fig_to_pil(fig), title))
 
