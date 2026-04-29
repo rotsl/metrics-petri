@@ -28,9 +28,7 @@ input_images/*
 outputs/*
 !outputs/.gitkeep
 !outputs/
-archives/*
-!archives/.gitkeep
-!archives/
+archives/
 
 # Model artefacts inside models/
 models/.DS_Store
