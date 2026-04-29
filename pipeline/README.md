@@ -127,19 +127,13 @@ The ZIP is named from the `user_name` field, falling back to `experiment_name`, 
 
 ## Notebook walkthrough
 
-Run the interactive notebook from any working directory:
+An interactive notebook (`notebooks/example_metrics-petri.ipynb`) is available in the [GitHub repository](https://github.com/rotsl/metrics-petri). It traces the full pipeline — mask inference, dish detection, crack analysis, and growth metrics — with inline plots at each step.
+
+The notebook is not distributed with the pip package. Clone the repo and run:
 
 ```bash
-metrics-petri-gui notebook
+make run-notebook
 ```
-
-This copies `example_metrics-petri.ipynb` to the current directory (if not already present) and opens it in JupyterLab. JupyterLab must be available:
-
-```bash
-pip install jupyterlab
-```
-
-The notebook uses `input_images/` and `outputs/` relative to the directory where JupyterLab is launched. The UNet checkpoint is resolved automatically — no path editing required.
 
 ---
 

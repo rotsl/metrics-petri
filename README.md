@@ -91,27 +91,13 @@ Full GUI documentation: [`pipeline/README.md`](pipeline/README.md)
 
 ## Notebook walkthrough
 
-### From a pip install
-
-Run the notebook from any directory. The command copies the notebook to your current directory and opens it in JupyterLab:
-
-```bash
-# if you installed via pip install metrics-petri
-metrics-petri notebook
-
-# if you installed via pip install "metrics-petri[gui]"
-metrics-petri-gui notebook
-```
-
-JupyterLab must be installed (`pip install jupyterlab`). The notebook uses `input_images/` and `outputs/` relative to the directory where you launch it.
-
-### From the cloned repo
-
 ```bash
 make run-notebook
 ```
 
-This uses the venv created by `make install` and opens `notebooks/example_metrics-petri.ipynb`.
+This uses the venv created by `make install` and opens `notebooks/example_metrics-petri.ipynb` in JupyterLab. The notebook traces the full pipeline — mask inference, dish detection, crack analysis, and growth metrics — with inline plots at each step.
+
+The notebook is not distributed with the pip package. Clone the repository to use it.
 
 ---
 
@@ -125,7 +111,7 @@ This uses the venv created by `make install` and opens `notebooks/example_metric
 | `make model-status` | Check whether the checkpoint is present |
 | `make run-gui` | Launch Gradio interface |
 | `make run-cli INPUT=path/` | Run batch CLI on a folder |
-| `make run-notebook` | Open the example notebook in JupyterLab (repo venv only) |
+| `make run-notebook` | Open the example notebook in JupyterLab |
 | `make build-package` | Build wheel and sdist for PyPI |
 | `make publish-pypi` | Upload to PyPI with twine |
 | `make clean` | Remove venv, caches, build artefacts |

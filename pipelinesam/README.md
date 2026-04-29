@@ -180,19 +180,13 @@ Prints Python version, NumPy version (warns if 2.x), Torch version and accelerat
 
 ## Notebook walkthrough
 
-Run the notebook from any working directory. The command copies the notebook to the current directory and opens it in JupyterLab:
+An interactive notebook (`notebooks/example_metrics-petri.ipynb`) is available in the [GitHub repository](https://github.com/rotsl/metrics-petri). It traces the full pipeline — mask inference, dish detection, crack analysis, and growth metrics — with inline plots at each step.
+
+The notebook is not distributed with the pip package. Clone the repo and run:
 
 ```bash
-metrics-petri notebook
+make run-notebook
 ```
-
-JupyterLab must be available in your environment:
-
-```bash
-pip install jupyterlab
-```
-
-The notebook uses `input_images/` and `outputs/` relative to the directory where JupyterLab is launched — no path editing needed. The UNet checkpoint is resolved automatically by the pipeline (bundled in the wheel, or downloaded from HuggingFace on first run).
 
 ---
 

@@ -2,7 +2,6 @@ include package.md
 include LICENSE
 include CITATION.cff
 recursive-include pipeline *.py
-recursive-include pipelinesam *.py *.ipynb
-include notebooks/example_metrics-petri.ipynb
+recursive-include pipelinesam *.py
 include models/__init__.py
 include models/*.pt

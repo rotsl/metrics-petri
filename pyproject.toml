@@ -5,20 +5,34 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "metrics-petri"
 version = "0.0.1"
-description = "metrics-petri: petri dish colony segmentation and morphometric analysis"
-readme = "package.md"
+description = "Petri dish colony segmentation and morphometric analysis for fungal growth experiments"
+readme = { file = "package.md", content-type = "text/markdown" }
 requires-python = ">=3.10"
 authors = [{ name = "Rohan R" }]
 maintainers = [{ name = "Rohan R" }]
 license = { text = "Apache-2.0" }
 keywords = [
-  "metrics-petri",
   "petri dish",
   "colony segmentation",
   "image analysis",
   "bioinformatics",
   "machine learning",
   "plant pathology",
+  "fungal growth",
+  "morphometrics",
+  "UNet",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Image Recognition",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+  "Operating System :: OS Independent",
 ]
 dependencies = [
   "Pillow>=10.0.0",
@@ -57,5 +71,5 @@ include = ["pipeline*", "pipelinesam*", "models"]
 
 [tool.setuptools.package-data]
 "pipeline"    = ["*.py"]
-"pipelinesam" = ["*.py", "notebooks/*.ipynb"]
+"pipelinesam" = ["*.py"]
 "models"      = ["*.pt"]

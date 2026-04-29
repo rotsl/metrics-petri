@@ -157,23 +157,9 @@ Checks Python, NumPy (warns if 2.x), Torch, accelerator (MPS/CUDA/CPU), model pa
 
 ## Notebook walkthrough
 
-Run the interactive notebook from any working directory:
+An interactive notebook is available in the [GitHub repository](https://github.com/rotsl/metrics-petri) at `notebooks/example_metrics-petri.ipynb`. It traces the full pipeline — mask inference, dish detection, crack analysis, and growth metrics — with inline plots at each step.
 
-```bash
-# if installed via pip install metrics-petri
-metrics-petri notebook
-
-# if installed via pip install "metrics-petri[gui]"
-metrics-petri-gui notebook
-```
-
-The command copies `example_metrics-petri.ipynb` to the current directory (if not already present) and opens it in JupyterLab. Install JupyterLab if needed:
-
-```bash
-pip install jupyterlab
-```
-
-The notebook uses `input_images/` and `outputs/` relative to the directory where it is launched. The UNet checkpoint is resolved automatically — no path editing required.
+The notebook is not distributed with the pip package. Clone the repository to use it.
 
 ---
 
