@@ -178,7 +178,12 @@ Apache 2.0 — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICE
 
 ## Citation
 
-```text
-Metrics Petri: petri dish colony segmentation and morphometric analysis. Rohan R, 2026.
-https://github.com/rotsl/metrics-petri
+```bibtex
+@software{Rohan_R_Metrics_Petri_petri_2026,
+author = {{Rohan R}},
+title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
+url = {https://github.com/rotsl/metrics-petri},
+version = {0.0.1},
+year = {2026}
+}
 ```
