@@ -1,4 +1,12 @@
 # metrics-petri
+![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Frotsl%2Fmetrics-petri%2Frefs%2Fheads%2Fmain%2Fpyproject.toml%3Ftoken%3DGHSAT0AAAAAADYTJ5BCWDW5TQEC7SBP25UM2PTAXHQ)
+![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square&logo=docsify&logoColor=hsl&link=https%3A%2F%2Fgithub.com%2Frotsl%2Fmetrics-petri%2Fblob%2Fmain%2FLICENSE)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/metrics-petri?style=plastic&logo=octobercms&logoColor=%23FFD700&labelColor=red&color=blue&link=https%3A%2F%2Fpypi.org%2Fproject%2Fmetrics-petri%2F)
+![GitHub Release](https://img.shields.io/github/v/release/rotsl/metrics-petri?display_name=release&style=social&logo=Doctrine&logoColor=red&labelColor=%23FFD700&color=%23FFD700)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F&up_message=Documention&up_color=red&logoColor=violet&labelColor=blue&color=green&link=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F)
+
+
+
 
 Macroscopic image analysis for fungal colony growth on petri dishes.
 
