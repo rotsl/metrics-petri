@@ -1,4 +1,7 @@
 # metrics-petri
+
+# metrics-petri <img src="metrics-petri-logo.png" align="right" height="139" alt="metrics-petri logo" />
+
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Frotsl%2Fmetrics-petri%2Frefs%2Fheads%2Fmain%2Fpyproject.toml%3Ftoken%3DGHSAT0AAAAAADYTJ5BCWDW5TQEC7SBP25UM2PTAXHQ)
 ![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square&logo=docsify&logoColor=hsl&link=https%3A%2F%2Fgithub.com%2Frotsl%2Fmetrics-petri%2Fblob%2Fmain%2FLICENSE)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/metrics-petri?style=plastic&logo=octobercms&logoColor=%23FFD700&labelColor=red&color=blue&link=https%3A%2F%2Fpypi.org%2Fproject%2Fmetrics-petri%2F)
