@@ -2,7 +2,7 @@
 
 # metrics-petri <img src="metrics-petri-logo.png" align="right" height="139" alt="metrics-petri logo" />
 
-![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Frotsl%2Fmetrics-petri%2Frefs%2Fheads%2Fmain%2Fpyproject.toml%3Ftoken%3DGHSAT0AAAAAADYTJ5BCWDW5TQEC7SBP25UM2PTAXHQ)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/metrics-petri?style=flat-square&logo=rocket&label=Supports%20Python&labelColor=green&color=blue&link=https%3A%2F%2Fpypi.org%2Fproject%2Fmetrics-petri%2F)
 ![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square&logo=docsify&logoColor=hsl&link=https%3A%2F%2Fgithub.com%2Frotsl%2Fmetrics-petri%2Fblob%2Fmain%2FLICENSE)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/metrics-petri?period=total&units=INTERNATIONAL_SYSTEM&left_color=YELLOW&right_color=RED&left_text=downloads)](https://pepy.tech/projects/metrics-petri)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F&up_message=Documention&up_color=red&logoColor=violet&labelColor=blue&color=green&link=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F)
