@@ -19,8 +19,8 @@ The repository ships three entry points:
 | Entry point | Install | Use |
 | --- | --- | --- |
 | `metrics-petri` | `pip install metrics-petri` | CLI batch pipeline |
-| `metrics-petri-gui` | `pip install "metrics-petri[gui]"` | Gradio browser GUI |
 | `metrics-petri-metadata` | `pip install metrics-petri` | Desktop GUI for building `image_metadata.csv` |
+| `metrics-petri-crop` | `pip install metrics-petri` | CLI crop multi-dish images into per-dish PNGs |
 
 ---
 
@@ -39,13 +39,7 @@ cd metrics-petri
 make install        # create venv, install deps, verify model checkpoint
 ```
 
-To include the Gradio GUI:
-
-```bash
-make install-gui
-```
-
-`make install` / `make install-gui` each: create a virtual environment, install Python dependencies, and download the UNet checkpoint to `models/best_area_w_0.7.pt` if it is not already present.
+`make install` creates a virtual environment, installs Python dependencies, and downloads the UNet checkpoint to `models/best_area_w_0.7.pt` if it is not already present.
 
 ### Model checkpoint
 
@@ -85,17 +79,27 @@ Full CLI documentation: [`pipelinesam/README.md`](pipelinesam/README.md)
 
 ---
 
-## GUI usage
+## Dish cropper
+
+`metrics-petri-crop` detects and crops individual petri dishes from photos where several dishes were captured together in a single image (2–8+ dishes per photo). It is a standalone utility — independent of the analysis pipeline.
 
 ```bash
-make run-gui
-# or directly:
-metrics-petri-gui
+# Crop all images in a folder
+metrics-petri-crop -i input_images/
+
+# Single image with date prefix on output filenames
+metrics-petri-crop -i photo.jpg --date 06/Feb
+
+# Save debug overlay showing detected circles
+metrics-petri-crop -i input_images/ --debug
+
+# Custom output directory
+metrics-petri-crop -i input_images/ -o cropped/
 ```
 
-Opens at `http://localhost:7860`. Five-step tab flow: upload → settings → edit dates → export metadata → run pipeline.
+Output is saved to a `cropped/` subfolder beside the input by default. Only fully visible dishes are extracted; partial dishes at image edges are ignored.
 
-Full GUI documentation: [`pipeline/README.md`](pipeline/README.md)
+Full option reference: `metrics-petri-crop --help`
 
 ---
 
@@ -115,11 +119,9 @@ The notebook is not distributed with the pip package. Clone the repository to us
 
 | Target | Description |
 | --- | --- |
-| `make install` | Create venv, install deps, download model (no GUI) |
-| `make install-gui` | Same, plus Gradio GUI extras |
+| `make install` | Create venv, install deps, download model |
 | `make download-model` | Download UNet checkpoint to `models/` if missing |
 | `make model-status` | Check whether the checkpoint is present |
-| `make run-gui` | Launch Gradio interface |
 | `make run-cli INPUT=path/` | Run batch CLI on a folder |
 | `make run-notebook` | Open the example notebook in JupyterLab |
 | `make build-package` | Build wheel and sdist for PyPI |
@@ -132,15 +134,11 @@ The notebook is not distributed with the pip package. Clone the repository to us
 
 ```text
 metrics-petri/
-├── pipeline/           # Gradio GUI package (metrics-petri-gui)
-│   ├── app.py          # Gradio application
-│   ├── analysis.py     # Core analysis functions
-│   ├── model.py        # SmallUNet definition
-│   ├── reporting.py    # matplotlib report generation
-│   └── cli.py          # metrics-petri-gui entry point
 ├── pipelinesam/        # CLI batch pipeline (metrics-petri)
 │   ├── pipeline.py     # Full pipeline logic
 │   ├── cli.py          # metrics-petri entry point
+│   ├── dish_cropper.py # metrics-petri-crop entry point
+│   ├── image_metadata_gui.py  # metrics-petri-metadata entry point
 │   ├── model_small_unet.py
 │   └── notebooks/      # Notebook shipped with the package
 ├── notebooks/          # Development notebooks

@@ -57,6 +57,7 @@ gui = [
 metrics-petri          = "pipelinesam.cli:main"
 metrics-petri-gui      = "pipeline.cli:main"
 metrics-petri-metadata = "pipelinesam.image_metadata_gui:main"
+metrics-petri-crop     = "pipelinesam.dish_cropper:main"
 
 [project.urls]
 Homepage   = "https://github.com/rotsl/metrics-petri"

@@ -11,8 +11,8 @@ Petri dish colony segmentation and morphometric analysis.
 | Entry point | Install | Use |
 | ----------- | ------- | --- |
 | `metrics-petri` | `pip install metrics-petri` | CLI batch pipeline |
-| `metrics-petri-gui` | `pip install "metrics-petri[gui]"` | Gradio browser GUI |
 | `metrics-petri-metadata` | `pip install metrics-petri` | Desktop GUI for building `image_metadata.csv` |
+| `metrics-petri-crop` | `pip install metrics-petri` | CLI crop multi-dish images into per-dish PNGs |
 
 ---
 
@@ -89,33 +89,27 @@ Four-step flow:
 3. **Review & Edit Dates** — a table lists every image with its date and day code (`d01`, `d02`, …); click any row to correct a date or set a reminder.
 4. **Export** — writes `image_metadata.csv`, `image_metadata.json`, and optionally `reminders.ics` into the image folder.
 
-Pass the exported file to the CLI with `--metadata` or upload it in the Gradio GUI's Step 4.
+Pass the exported file to the CLI with `--metadata`.
 
 ---
 
-## Gradio browser GUI
+## Dish cropper
+
+`metrics-petri-crop` automatically detects and crops individual petri dishes from photos where several dishes were captured together in a single image (2–8+ per photo). It is a standalone utility — independent of the analysis pipeline.
 
 ```bash
-pip install "metrics-petri[gui]"
-metrics-petri-gui
+metrics-petri-crop -i input_images/
 ```
 
-Opens at `http://localhost:7860`. Five-step tab flow:
+| Flag | Description |
+| ---- | ----------- |
+| `-i, --input` | Image file or directory |
+| `-o, --output` | Output directory (default: `<input>/cropped/`) |
+| `-p, --padding` | Extra space around each dish (default: `0.05` = 5% of radius) |
+| `-d, --debug` | Save debug overlays showing detection circles |
+| `-D, --date` | Prefix output filenames: `DD/MM/YYYY`, `DD/Mon`, or `DD Mon` |
 
-1. **Upload images** — JPEG, PNG, TIFF, BMP, WebP, HEIF, RAW
-2. **Settings** — threshold, fast mode, experiment name, user name, plate count
-3. **Review & edit dates** — annotate `experiment_date` / `image_date` per image; day codes are computed automatically
-4. **Export metadata** — download `image_metadata.csv` for future runs or for the CLI
-5. **Run inference** — segmentation, dish detection, cracks, hyphal skeletons, growth charts, ZIP download
-
-Options:
-
-```bash
-metrics-petri-gui --port 8080
-metrics-petri-gui --host 127.0.0.1
-metrics-petri-gui --no-browser
-metrics-petri-gui --model /path/to/checkpoint.pt
-```
+Only fully visible dishes are extracted. Output filenames follow the pattern `{stem}_dish_{NN}.png` (or `{YYYYMMDD}_{stem}_dish_{NN}.png` with `--date`).
 
 ---
 
@@ -148,7 +142,6 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 
 ```bash
 metrics-petri doctor
-metrics-petri-gui doctor
 ```
 
 Checks Python, NumPy (warns if 2.x), Torch, accelerator (MPS/CUDA/CPU), model path, and all dependencies. Exits with code 1 on any issue.
@@ -167,7 +160,6 @@ The notebook is not distributed with the pip package. Clone the repository to us
 
 - Python ≥ 3.10
 - PyTorch ≥ 2.1 (CPU works; MPS used automatically on Apple Silicon)
-- Gradio ≥ 6.0 (GUI only, via `[gui]` extra)
 - tkinter — stdlib, bundled on macOS/Windows; `sudo apt install python3-tk` on Linux
 
 ---
