@@ -209,7 +209,7 @@ Apache 2.0 — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICE
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {0.0.1},
+version = {2.0.0},
 year = {2026}
 }
 ```
