@@ -40,20 +40,20 @@ jobs:
           cat <<EOF > docs/index.md
           # Metrics Petri Packages
 
-          - [Pipeline](pipeline/)
-          - [PipelineSAM](pipelinesam/)
+          - [metrics-petri](readme/)
+          - [metrics-petri Pipeline](pipelinesam/)
           - [Python Package](package/)
           EOF
+          cp README.md docs/readme.md
           cp pipelinesam/README.md docs/pipelinesam.md
-          cp pipeline/README.md docs/pipeline.md
           cp package.md docs/package.md
           cat <<EOF > mkdocs.yml
           site_name: Metrics Petri Packages
           site_url: https://rotsl.github.io/metrics-petri/
           nav:
             - Home: index.md
-            - Pipeline: pipeline.md
-            - PipelineSAM: pipelinesam.md
+            - metrics-petri: readme.md
+            - metrics-petri Pipeline: pipelinesam.md
             - Python Package: package.md
           extra:
             social:
