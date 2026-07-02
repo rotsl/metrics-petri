@@ -61,11 +61,15 @@ def detect_image_date(p: str) -> str:
 
 
 def build_day_code_map(dates_dict: dict[str, str], exp_date: str) -> dict[str, str]:
-    """Build a mapping from date-string → sequential day-code.
+    """Build a mapping from date-string → day-code.
 
-    Day codes are ordinal: the experiment date (or earliest image date if
-    no experiment date) is d01, the next distinct image-date is d02, etc.
-    Images taken on the *same* date share the same code.
+    Day code = calendar days elapsed since the experiment date:
+      - exp_date itself → d00  (day 0 = inoculation / experiment setup)
+      - exp_date + 1 day → d01, + 4 days → d04, etc.
+      - dates before exp_date are clamped to d00
+
+    When no experiment date is provided, codes are assigned sequentially
+    (d01, d02, …) from the earliest observed image date.
 
     Parameters
     ----------
@@ -76,7 +80,6 @@ def build_day_code_map(dates_dict: dict[str, str], exp_date: str) -> dict[str, s
     -------
     {date_iso_str: "dNN", ...}
     """
-    # Collect every unique date that can be parsed
     unique_dates: set[dt.date] = set()
     for d_str in dates_dict.values():
         try:
@@ -84,43 +87,26 @@ def build_day_code_map(dates_dict: dict[str, str], exp_date: str) -> dict[str, s
         except (ValueError, TypeError):
             pass
 
-    # Include the experiment date itself so it always anchors at d01
     try:
         exp_d = dt.date.fromisoformat(exp_date)
-        unique_dates.add(exp_d)
     except (ValueError, TypeError):
         exp_d = None
 
     if not unique_dates:
         return {}
 
-    # Sort chronologically and assign ordinal codes
-    sorted_dates = sorted(unique_dates)
-
-    # If experiment date is valid, it defines ordinal 1.
-    # Dates before the experiment date are clamped to d01.
     if exp_d is not None:
         code_map: dict[str, str] = {}
-        ordinal = 1
-        prev_assigned = 0
-        for d in sorted_dates:
-            if d < exp_d:
-                code_map[d.isoformat()] = "d01"  # before experiment → d01
-            elif d == exp_d:
-                code_map[d.isoformat()] = "d01"
-                prev_assigned = 1
-            else:
-                if prev_assigned == 0:
-                    # experiment date wasn't in sorted list yet; it's d01
-                    prev_assigned = 1
-                prev_assigned += 1
-                code_map[d.isoformat()] = f"d{prev_assigned:02d}"
-        # Ensure exp_date itself is in the map
+        for d in unique_dates:
+            delta = max(0, (d - exp_d).days)
+            code_map[d.isoformat()] = f"d{delta:02d}"
+        # Ensure exp_date is always present, even if no image falls on that date
         if exp_d.isoformat() not in code_map:
-            code_map[exp_d.isoformat()] = "d01"
+            code_map[exp_d.isoformat()] = "d00"
         return code_map
     else:
-        # No experiment date — just number sequentially from 1
+        # No experiment date — sequential from 1
+        sorted_dates = sorted(unique_dates)
         return {d.isoformat(): f"d{i:02d}" for i, d in enumerate(sorted_dates, start=1)}
 
 
