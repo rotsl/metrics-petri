@@ -6,6 +6,37 @@ Petri dish colony segmentation and morphometric analysis.
 
 ---
 
+## Workflow
+
+```text
+  📁 Image folder
+       │
+       ▼
+  metrics-petri-metadata          ← optional but recommended
+       Step 1 · select folder (dates auto-detected)
+       Step 2 · experiment name · start date · plates
+       Step 3 · review and assign day codes per image
+       Step 4 · export
+       │
+       │ writes
+       ▼
+  image_metadata.csv
+       │ --metadata
+       └───────────────────────────────────────┐
+                                               │
+  📁 Image folder ─────────────────────────► metrics-petri
+                                               │
+                                               ▼
+                                          results.zip
+                                          ├── analysis_full.csv
+                                          ├── overlays/
+                                          └── charts/  ← growth curves with day codes
+```
+
+`metrics-petri-metadata` is optional — `metrics-petri` can run on images alone, but supplying metadata enables growth-rate calculations and day-coded charts.
+
+---
+
 ## Three entry points, one package
 
 | Entry point | Install | Use |
@@ -18,7 +49,7 @@ Petri dish colony segmentation and morphometric analysis.
 
 ## Model checkpoint
 
-The package bundles the SmallUNet checkpoint (`best_area_w_0.7.pt`, ~23 MB) inside the wheel. No separate download is needed after `pip install`.
+The package bundles the SmallUNet checkpoint (`best_area_w_0.7.pt`, ~23 MB) inside the wheel. No separate download is needed after `pip install`. The model was trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a companion repository covering training, annotation, sweep evaluation, and manual diameter validation against model-generated masks.
 
 At run time the checkpoint is located in this order:
 
@@ -32,6 +63,9 @@ At run time the checkpoint is located in this order:
 ## CLI batch pipeline
 
 ```bash
+python3.12 -m venv petrienv
+source petrienv/bin/activate
+pip install --upgrade pip
 pip install metrics-petri
 metrics-petri input_images/
 ```

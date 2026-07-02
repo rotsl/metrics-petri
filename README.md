@@ -14,6 +14,24 @@ Macroscopic image analysis for fungal colony growth on petri dishes.
 
 `metrics-petri` measures how a sample expands, whether its edge stays smooth or roughens, when cracks appear, and how centre-to-edge texture evolves over time. It turns a folder of time-series images into physical measurements (mm², mm, day⁻¹) with overlay visualisations.
 
+## Workflow
+
+```mermaid
+flowchart TD
+    A["📁 Image folder"]
+
+    A --> B["metrics-petri-metadata<br/>─────────────────────────<br/>Step 1 · select folder — auto-detect dates<br/>Step 2 · experiment name · start date · plates<br/>Step 3 · review &amp; assign day codes per image<br/>Step 4 · export"]
+
+    B -->|"writes"| C["📄 image_metadata.csv"]
+
+    A -->|"images"| D["metrics-petri<br/>(batch analysis)"]
+    C -->|"--metadata"| D
+
+    D --> E["📦 results.zip<br/>─────────────────────────<br/>analysis_full.csv<br/>overlays/ · charts/"]
+```
+
+`metrics-petri-metadata` is optional — `metrics-petri` can run on images alone, but supplying metadata enables growth-rate calculations and day-coded charts.
+
 The repository ships three entry points:
 
 | Entry point | Install | Use |
@@ -41,9 +59,20 @@ make install        # create venv, install deps, verify model checkpoint
 
 `make install` creates a virtual environment, installs Python dependencies, and downloads the UNet checkpoint to `models/best_area_w_0.7.pt` if it is not already present.
 
+### Install from PyPI
+
+```bash
+python3.12 -m venv petrienv
+source petrienv/bin/activate
+pip install --upgrade pip
+pip install metrics-petri
+```
+
 ### Model checkpoint
 
-The checkpoint `models/best_area_w_0.7.pt` is tracked in this repository and downloaded automatically by `make install`. To fetch it independently:
+The checkpoint `models/best_area_w_0.7.pt` is tracked in this repository and downloaded automatically by `make install`. It was trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a companion repository that trains and evaluates the SmallUNet on annotated petri-dish images, hosts the LabelMe JSON annotations and sweep plots, and includes a PySide6 desktop tool for manual diameter validation against model-generated masks.
+
+To fetch the checkpoint independently:
 
 ```bash
 make download-model
@@ -172,6 +201,15 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 
 ---
 
+## Connected projects
+
+| Project | Description |
+| ------- | ----------- |
+| [**petrimodel**](https://github.com/rotsl/petrimodel) | Trains and evaluates the SmallUNet used by `metrics-petri`. Includes LabelMe JSON annotations, training data, sweep plots, trained checkpoints, and a PySide6 desktop tool for manual diameter validation against model-generated masks. |
+| [**Automator**](https://github.com/rotsl/Automator) | Robotic imaging system at The Sainsbury Laboratory, Norwich. Photographs QR-labelled petri dishes automatically at set intervals over the course of an experiment. Images produced by Automator are the intended input for `metrics-petri`. Documentation: [rotsl.github.io/Automator](https://rotsl.github.io/Automator/) |
+
+---
+
 ## License and citation
 
 Apache 2.0 — see [`LICENSE`](LICENSE).
@@ -181,7 +219,7 @@ Apache 2.0 — see [`LICENSE`](LICENSE).
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {0.0.1},
+version = {2.0.0},
 year = {2026}
 }
 ```
