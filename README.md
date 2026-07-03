@@ -181,7 +181,7 @@ metrics-petri/
 │       └── best_area_w_0.7.pt
 ├── notebooks/              # Development notebooks
 │   └── example_metrics-petri.ipynb
-├── tests/
+├── tests/                  # pytest suite (test_metrics.py, test_metadata.py)
 ├── input_images/           # Source images (gitignored)
 ├── outputs/                # Analysis outputs (gitignored)
 └── pyproject.toml

@@ -40,7 +40,8 @@ metrics-petri-gui --model /path/to/model.pt # custom UNet checkpoint
 At start-up the pipeline searches for the checkpoint in this order:
 
 1. `--model` flag or `UNET_MODEL` environment variable — if set, that path is used directly.
-2. `models/best_area_w_0.7.pt` relative to the current working directory (useful when running from the cloned repo).
+2. `metrics_petri/models/best_area_w_0.7.pt` relative to the current working
+   directory (useful when running from the cloned repo).
 3. The installed package location — `importlib.resources` resolves the bundled file inside the wheel.
 4. HuggingFace Hub auto-download — if none of the above exist, the file is downloaded automatically from `rotsl/grayleafspot-segmentation` and cached locally.
 
@@ -143,7 +144,7 @@ make run-notebook
 metrics-petri-gui doctor
 ```
 
-Prints Python version, NumPy version (warns if 2.x), Torch version and accelerator, Gradio version, model path, and dependency health. Exits with code 1 if any issue is found.
+Prints Python version, NumPy version, Torch version and accelerator, Gradio version, model path, and dependency health. Exits with code 1 if any issue is found.
 
 ---
 
@@ -159,4 +160,4 @@ All dependencies are installed with `pip install "metrics-petri[gui]"`.
 
 ## License
 
-Apache 2.0. See [LICENSE](https://github.com/rotsl/metrics-petri/blob/main/LICENSE) for the full text.
+MIT. See [LICENSE](https://github.com/rotsl/metrics-petri/blob/main/LICENSE) for the full text.

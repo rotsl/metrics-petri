@@ -9,7 +9,7 @@ _HF_REPO = "rotsl/grayleafspot-segmentation"
 _HF_FILE = "best_area_w_0.7.pt"
 
 _DEFAULT_MODEL_CANDIDATES = [
-    Path("models/best_area_w_0.7.pt"),
+    Path("metrics_petri/models/best_area_w_0.7.pt"),
     Path(__file__).resolve().parent / "models" / _HF_FILE,
 ]
 

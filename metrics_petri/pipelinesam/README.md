@@ -21,7 +21,8 @@ The package bundles the SmallUNet checkpoint (`best_area_w_0.7.pt`) inside the w
 At start-up the pipeline searches for the checkpoint in this order:
 
 1. `UNET_MODEL` environment variable — if set, that path is used directly.
-2. `models/best_area_w_0.7.pt` relative to the current working directory (useful when running from the cloned repo).
+2. `metrics_petri/models/best_area_w_0.7.pt` relative to the current working
+   directory (useful when running from the cloned repo).
 3. The installed package location — `importlib.resources` resolves the bundled file inside the wheel.
 4. HuggingFace Hub auto-download — if none of the above exist, the file is downloaded automatically from `rotsl/grayleafspot-segmentation` and cached locally.
 
@@ -59,8 +60,6 @@ sudo dnf install python3-tkinter  # Fedora / RHEL
 ```bash
 metrics-petri-metadata
 ```
-
-The four-step interface mirrors the Gradio GUI:
 
 | Step | What you do |
 | ---- | ----------- |
@@ -174,7 +173,7 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 metrics-petri doctor
 ```
 
-Prints Python version, NumPy version (warns if 2.x), Torch version and accelerator, model path, and dependency health. Exits with code 1 if any issue is found.
+Prints Python version, NumPy version, Torch version and accelerator, model path, and dependency health. Exits with code 1 if any issue is found.
 
 ---
 
@@ -208,4 +207,4 @@ All pip-installable dependencies are installed automatically with `pip install m
 
 ## License
 
-Apache 2.0. See [LICENSE](https://github.com/rotsl/metrics-petri/blob/main/LICENSE) for the full text.
+MIT. See [LICENSE](https://github.com/rotsl/metrics-petri/blob/main/LICENSE) for the full text.

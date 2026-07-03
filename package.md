@@ -54,7 +54,7 @@ The package bundles the SmallUNet checkpoint (`best_area_w_0.7.pt`, ~23 MB) insi
 At run time the checkpoint is located in this order:
 
 1. `UNET_MODEL` environment variable or `--model` flag
-2. `models/best_area_w_0.7.pt` in the current working directory
+2. `metrics_petri/models/best_area_w_0.7.pt` in the current working directory
 3. The installed package location (bundled in the wheel)
 4. HuggingFace Hub auto-download (`rotsl/grayleafspot-segmentation`) as a last resort
 
