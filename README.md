@@ -1,6 +1,6 @@
 # metrics-petri
 
-![metrics-petri logo](metrics-petri-logo.png)
+<img src="metrics-petri-logo.png" align="right" height="100" alt="metrics-petri logo" />
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/metrics-petri?style=flat-square&logo=rocket&label=Supports%20Python&labelColor=green&color=blue&link=https%3A%2F%2Fpypi.org%2Fproject%2Fmetrics-petri%2F)
 ![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square&logo=docsify&logoColor=hsl&link=https%3A%2F%2Fgithub.com%2Frotsl%2Fmetrics-petri%2Fblob%2Fmain%2FLICENSE)
