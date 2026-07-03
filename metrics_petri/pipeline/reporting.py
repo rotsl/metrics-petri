@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Pure-Python report generation (matplotlib only, no R/Quarto)."""
 
 from __future__ import annotations

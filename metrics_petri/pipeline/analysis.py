@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Core analysis functions for the GUI package.
 
 Uses models/best_area_w_0.7.pt (SmallUNet) for segmentation.
@@ -26,44 +27,15 @@ from skimage.filters import frangi, meijering, threshold_local
 from skimage.measure import shannon_entropy
 
 from .model import SmallUNet
+from metrics_petri._paths import _HF_REPO, _HF_FILE, _DEFAULT_MODEL_CANDIDATES, _find_model_path
 
 # ── constants ──────────────────────────────────────────────────────────────
 CONTAINER_MM = 90.0
 IMAGE_SIZE = 256
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
 
-_HF_REPO = "rotsl/grayleafspot-segmentation"
-_HF_FILE = "best_area_w_0.7.pt"
-
-_DEFAULT_MODEL_CANDIDATES = [
-    Path("models/best_area_w_0.7.pt"),
-    Path(__file__).resolve().parent.parent / "models" / "best_area_w_0.7.pt",
-]
-
 # ── model ──────────────────────────────────────────────────────────────────
 _model: SmallUNet | None = None
-
-
-def _find_model_path() -> Path | None:
-    """Return model path if found locally (env var, repo root, bundled package).
-    Returns None without downloading — safe to call at import time.
-    """
-    env = os.getenv("UNET_MODEL")
-    if env:
-        p = Path(env).expanduser().resolve()
-        if p.exists():
-            return p
-    for c in _DEFAULT_MODEL_CANDIDATES:
-        if c.exists():
-            return c.resolve()
-    try:
-        from importlib.resources import files
-        p = Path(str(files("models").joinpath(_HF_FILE)))
-        if p.exists():
-            return p
-    except Exception:
-        pass
-    return None
 
 
 def _resolve_model_path() -> Path:

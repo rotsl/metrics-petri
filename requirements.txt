@@ -1,4 +1,4 @@
-# Core (CLI + notebook)
+# Core dependencies — mirrors [project].dependencies in pyproject.toml
 # Note: tkinter is part of the Python standard library and is NOT pip-installable.
 #   macOS / Windows: bundled with the official Python installer.
 #   Linux:           sudo apt install python3-tk  (or equivalent)
@@ -7,12 +7,12 @@ pandas>=2.0.0
 torch>=2.1.0
 scikit-image>=0.22.0
 scipy>=1.11.0
-numpy>=1.24.0,<2.0
+numpy>=1.24.0
 opencv-python-headless>=4.8.0
 matplotlib>=3.7.0
 rawpy>=0.21.0
 huggingface_hub>=0.20.0
 
 # GUI extras — install with: pip install "metrics-petri[gui]"
-gradio>=6.0.0
-pillow-heif>=0.16.0
+# gradio>=6.0.0
+# pillow-heif>=0.16.0

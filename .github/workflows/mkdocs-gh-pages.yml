@@ -45,7 +45,7 @@ jobs:
           - [Python Package](package/)
           EOF
           cp README.md docs/readme.md
-          cp pipelinesam/README.md docs/pipelinesam.md
+          cp metrics_petri/pipelinesam/README.md docs/pipelinesam.md
           cp package.md docs/package.md
           cat <<EOF > mkdocs.yml
           site_name: Metrics Petri Packages
@@ -62,7 +62,7 @@ jobs:
             footer: |
               <hr/>
               <div style='text-align:center;font-size:0.9em;'>
-                Developed by <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Rohan R</a> &mdash; <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Apache 2.0</a>
+                Developed by <a href='https://github.com/rotsl/metrics-petri' target='_blank'>Rohan R</a> &mdash; <a href='https://github.com/rotsl/metrics-petri' target='_blank'>MIT</a>
               </div>
           extra_javascript: []
           extra_css: []

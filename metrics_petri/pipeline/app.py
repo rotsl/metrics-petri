@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """Gradio GUI for metrics-petri colony segmentation and analysis.
 
 Run via:
@@ -301,7 +302,7 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
             "Developed by "
             "<a href='https://www.tsl.ac.uk/about/people/rohan-rebello' target='_blank' "
             "style='color:#4f46e5;text-decoration:none'>Rohan R</a>"
-            " &nbsp;·&nbsp; Apache 2.0"
+            " &nbsp;·&nbsp; MIT"
             "</div>"
         )
         close_btn = gr.Button("⏹ Close", variant="stop", size="sm", scale=0)

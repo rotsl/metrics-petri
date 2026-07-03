@@ -1,14 +1,11 @@
 # metrics-petri
 
-# metrics-petri <img src="metrics-petri-logo.png" align="right" height="139" alt="metrics-petri logo" />
+![metrics-petri logo](metrics-petri-logo.png)
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/metrics-petri?style=flat-square&logo=rocket&label=Supports%20Python&labelColor=green&color=blue&link=https%3A%2F%2Fpypi.org%2Fproject%2Fmetrics-petri%2F)
 ![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square&logo=docsify&logoColor=hsl&link=https%3A%2F%2Fgithub.com%2Frotsl%2Fmetrics-petri%2Fblob%2Fmain%2FLICENSE)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/metrics-petri?period=total&units=INTERNATIONAL_SYSTEM&left_color=YELLOW&right_color=RED&left_text=downloads)](https://pepy.tech/projects/metrics-petri)
 ![Website](https://img.shields.io/website?url=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F&up_message=Documention&up_color=red&logoColor=violet&labelColor=blue&color=green&link=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F)
-
-
-
 
 Macroscopic image analysis for fungal colony growth on petri dishes.
 
@@ -68,6 +65,13 @@ pip install --upgrade pip
 pip install metrics-petri
 ```
 
+PyTorch is pulled in automatically. For a CPU-only install without CUDA drivers:
+
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install metrics-petri
+```
+
 ### Model checkpoint
 
 The checkpoint `models/best_area_w_0.7.pt` is tracked in this repository and downloaded automatically by `make install`. It was trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a companion repository that trains and evaluates the SmallUNet on annotated petri-dish images, hosts the LabelMe JSON annotations and sweep plots, and includes a PySide6 desktop tool for manual diameter validation against model-generated masks.
@@ -104,7 +108,7 @@ metrics-petri input_images/ --threshold 0.45
 
 Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, per-image overlays, and growth-curve charts with day codes on the x-axis.
 
-Full CLI documentation: [`pipelinesam/README.md`](pipelinesam/README.md)
+Full CLI documentation: [`metrics_petri/pipelinesam/README.md`](metrics_petri/pipelinesam/README.md)
 
 ---
 
@@ -163,19 +167,23 @@ The notebook is not distributed with the pip package. Clone the repository to us
 
 ```text
 metrics-petri/
-├── pipelinesam/        # CLI batch pipeline (metrics-petri)
-│   ├── pipeline.py     # Full pipeline logic
-│   ├── cli.py          # metrics-petri entry point
-│   ├── dish_cropper.py # metrics-petri-crop entry point
-│   ├── image_metadata_gui.py  # metrics-petri-metadata entry point
-│   ├── model_small_unet.py
-│   └── notebooks/      # Notebook shipped with the package
-├── notebooks/          # Development notebooks
+├── metrics_petri/          # Python namespace package
+│   ├── __init__.py         # version single-sourced here
+│   ├── _model.py           # canonical SmallUNet architecture
+│   ├── _paths.py           # shared model-path resolution
+│   ├── pipelinesam/        # CLI batch pipeline (metrics-petri)
+│   │   ├── pipeline.py
+│   │   ├── cli.py
+│   │   ├── dish_cropper.py
+│   │   ├── image_metadata_gui.py
+│   │   └── model_small_unet.py
+│   └── models/             # UNet checkpoint (bundled in wheel)
+│       └── best_area_w_0.7.pt
+├── notebooks/              # Development notebooks
 │   └── example_metrics-petri.ipynb
-├── models/             # UNet checkpoint (tracked in repo)
-│   └── best_area_w_0.7.pt
-├── input_images/       # Source images (gitignored)
-├── outputs/            # Analysis outputs (gitignored)
+├── tests/
+├── input_images/           # Source images (gitignored)
+├── outputs/                # Analysis outputs (gitignored)
 └── pyproject.toml
 ```
 
@@ -212,14 +220,14 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 
 ## License and citation
 
-Apache 2.0 — see [`LICENSE`](LICENSE).
+MIT — see [`LICENSE`](LICENSE).
 
 ```bibtex
 @software{Rohan_R_Metrics_Petri_petri_2026,
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.0.0},
+version = {2.1.0},
 year = {2026}
 }
 ```

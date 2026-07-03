@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """
 image_metadata_gui.py — Desktop GUI for metrics-petri metadata management.
 

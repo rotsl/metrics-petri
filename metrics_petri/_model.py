@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 """SmallUNet architecture — compact U-Net with base width 16."""
 
 import torch
@@ -39,7 +40,7 @@ class UpBlock(nn.Module):
         x = self.up(x)
         if x.shape[-2:] != skip.shape[-2:]:
             x = F.interpolate(x, size=skip.shape[-2:], mode="bilinear", align_corners=False)
-        x = torch.cat([skip, x], dim=1)
+        x = torch.cat([skip, x], dim=1)  # skip first, matching training convention
         return self.conv(x)
 
 

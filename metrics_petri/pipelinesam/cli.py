@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT
 """metrics-petri CLI — batch pipeline without GUI.
 
 Usage:
@@ -296,11 +297,7 @@ def _run_doctor() -> None:
     try:
         import numpy as np
         nv = np.__version__
-        if int(nv.split(".")[0]) >= 2:
-            rows.append(("NumPy", f"{nv}  ⚠️  NumPy 2.x conflicts with PyTorch — run: pip install 'numpy<2'"))
-            ok = False
-        else:
-            rows.append(("NumPy", nv))
+        rows.append(("NumPy", nv))
     except ImportError:
         rows.append(("NumPy", "MISSING"))
         ok = False
@@ -319,7 +316,7 @@ def _run_doctor() -> None:
         ok = False
 
     try:
-        from pipelinesam.pipeline import _find_model_path
+        from metrics_petri.pipelinesam.pipeline import _find_model_path
         p = _find_model_path()
         if p and p.exists():
             mb = p.stat().st_size / 1_048_576

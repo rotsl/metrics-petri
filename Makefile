@@ -7,7 +7,7 @@ VENV_PIP     := $(VENV_PYTHON) -m pip
 VENV_JUPYTER := $(VENV_DIR)/bin/jupyter
 
 NOTEBOOK_PATH := notebooks/example_metrics-petri.ipynb
-UNET_MODEL    := models/best_area_w_0.7.pt
+UNET_MODEL    := metrics_petri/models/best_area_w_0.7.pt
 MODEL_URL     := https://huggingface.co/rotsl/grayleafspot-segmentation/resolve/main/best_area_w_0.7.pt
 KERNEL_NAME   := metrics-petri
 INPUT         ?= input_images/
@@ -21,7 +21,7 @@ all: install
 # ── environment ────────────────────────────────────────────────────────────────
 
 setup:
-	mkdir -p input_images outputs archives models .mplconfig
+	mkdir -p input_images outputs archives metrics_petri/models .mplconfig
 	@if [ ! -d "$(VENV_DIR)" ]; then \
 		$(PYTHON) -m venv $(VENV_DIR); \
 	fi
@@ -31,7 +31,7 @@ setup:
 # ── model checkpoint ───────────────────────────────────────────────────────────
 
 download-model:
-	@mkdir -p models
+	@mkdir -p metrics_petri/models
 	@if [ -f "$(UNET_MODEL)" ]; then \
 		echo "  ✓  Model present: $(UNET_MODEL)"; \
 	else \

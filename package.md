@@ -178,7 +178,7 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 metrics-petri doctor
 ```
 
-Checks Python, NumPy (warns if 2.x), Torch, accelerator (MPS/CUDA/CPU), model path, and all dependencies. Exits with code 1 on any issue.
+Checks Python, NumPy, Torch, accelerator (MPS/CUDA/CPU), model path, and all dependencies. Exits with code 1 on any issue.
 
 ---
 
@@ -200,7 +200,7 @@ The notebook is not distributed with the pip package. Clone the repository to us
 
 ## License
 
-Apache 2.0 — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICENSE)
+MIT — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICENSE)
 
 ## Citation
 
@@ -209,7 +209,7 @@ Apache 2.0 — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICE
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.0.0},
+version = {2.1.0},
 year = {2026}
 }
 ```
