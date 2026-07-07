@@ -23,9 +23,6 @@ site/
 
 # Data directories (user-managed, not source)
 data/
-input_images/*
-!input_images/.gitkeep
-!input_images/
 outputs/*
 !outputs/.gitkeep
 !outputs/
