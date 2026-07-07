@@ -8,18 +8,24 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import pandas as pd
 import torch
 from PIL import Image
-import pandas as pd
 from scipy import ndimage
-from skimage import measure, morphology, filters, exposure
+from skimage import exposure, filters, measure, morphology
 from skimage.filters import frangi, meijering, threshold_local
 from skimage.measure import shannon_entropy
 
+from metrics_petri._model import _select_device
+from metrics_petri._paths import (
+    _DEFAULT_MODEL_CANDIDATES,
+    _HF_FILE,
+    _HF_REPO,
+    _find_model_path,
+    _verify_model_checksum,
+    _verify_model_if_managed,
+)
 from metrics_petri.pipelinesam.model_small_unet import SmallUNet
-from metrics_petri._paths import _HF_REPO, _HF_FILE, _DEFAULT_MODEL_CANDIDATES, _find_model_path
-
-warnings.filterwarnings('ignore', category=FutureWarning)
 
 # ---------------- CONFIG ----------------
 IMG_DIR = Path(os.getenv('IMG_DIR', '.')).resolve()
@@ -29,19 +35,21 @@ CONTAINER_MM = 90.0
 
 IMAGE_SIZE = 256
 MASK_THRESHOLD = float(os.getenv('MASK_THRESHOLD', '0.5'))
-DEVICE = 'mps' if torch.backends.mps.is_available() else 'cpu'
+DEVICE = _select_device()
 
 
 def _resolve_model_path() -> Path:
     """Return model path, auto-downloading from HuggingFace if not found locally."""
     p = _find_model_path()
     if p:
-        return p
+        return _verify_model_if_managed(p)
     try:
         from huggingface_hub import hf_hub_download
         print(f'[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…', flush=True)
         cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE)
-        return Path(cached)
+        return _verify_model_checksum(Path(cached))
+    except ValueError:
+        raise
     except Exception as exc:
         raise FileNotFoundError(
             'UNet checkpoint not found. Set UNET_MODEL=/path/to/best_area_w_0.7.pt '
@@ -50,8 +58,16 @@ def _resolve_model_path() -> Path:
         ) from exc
 
 
-# Expose for notebook compatibility — does not trigger download at import time
-MODEL_PATH: Path = _find_model_path() or _DEFAULT_MODEL_CANDIDATES[-1]
+def __getattr__(name: str):
+    """Resolve deprecated module attributes lazily for notebook compatibility."""
+    if name == "MODEL_PATH":
+        warnings.warn(
+            "MODEL_PATH is deprecated; use _resolve_model_path() when the model is needed",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return _find_model_path() or _DEFAULT_MODEL_CANDIDATES[-1]
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 # ---------------- MODEL (lazy singleton) ----------------
 _model: SmallUNet | None = None
@@ -63,7 +79,7 @@ def get_model() -> SmallUNet:
         model_path = _resolve_model_path()
         print(f"[UNet] loading {model_path} on {DEVICE}")
         m = SmallUNet(in_channels=3, out_channels=1, base_channels=16)
-        checkpoint = torch.load(model_path, map_location=DEVICE, weights_only=False)
+        checkpoint = torch.load(model_path, map_location=DEVICE, weights_only=True)
         state_dict = checkpoint['model_state_dict'] if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint else checkpoint
         m.load_state_dict(state_dict, strict=True)
         m.eval()
@@ -124,6 +140,16 @@ def get_radius(props):
     return getattr(props, 'equivalent_diameter_area', props.equivalent_diameter) / 2
 
 
+def _compute_texture_metrics(
+    gray: np.ndarray, mask: np.ndarray
+) -> tuple[float, float]:
+    """Return entropy and intensity standard deviation within the colony mask."""
+    pixels = np.asarray(gray)[np.asarray(mask, dtype=bool)]
+    if pixels.size == 0:
+        return 0.0, 0.0
+    return float(shannon_entropy(pixels)), float(pixels.std())
+
+
 # ---------------- CORE ANALYSIS ----------------
 def analyze_image(img_path: Path, meta: dict):
     model = get_model()
@@ -154,8 +180,7 @@ def analyze_image(img_path: Path, meta: dict):
     centre_delta_mm = np.hypot(cx_c - cx, cy_c - cy) * px_to_mm
     edge_roughness = props.perimeter / (2 * np.pi * radius_px) if radius_px > 0 else np.nan
 
-    entropy = float(shannon_entropy(gray))
-    texture_std = float(gray.std())
+    entropy, texture_std = _compute_texture_metrics(gray, mask)
 
     corr = cv2.divide(gray, cv2.GaussianBlur(gray, (0, 0), 50), scale=255)
     filled = ndimage.binary_fill_holes(mask)
@@ -210,17 +235,13 @@ def analyze_image(img_path: Path, meta: dict):
 
 # ---------------- MAIN ----------------
 def main():
+    from metrics_petri.pipelinesam.cli import _build_metadata_tasks, _load_metadata
+
     if not METADATA_CSV.exists():
         raise FileNotFoundError(f"Missing {METADATA_CSV} — run input.py first")
 
-    meta_df = pd.read_csv(METADATA_CSV)
-    for col in ['image_path', 'experiment_name', 'experiment_date', 'image_date', 'day_code', 'user_name', 'plates_count']:
-        if col not in meta_df.columns:
-            meta_df[col] = ''
-
-    tasks = [(IMG_DIR / str(r['image_path']), r.to_dict())
-             for _, r in meta_df.iterrows()
-             if (IMG_DIR / str(r['image_path'])).exists()]
+    meta_df = _load_metadata(METADATA_CSV)
+    tasks = _build_metadata_tasks(IMG_DIR, meta_df)
 
     print(f"Processing {len(tasks)} images on {DEVICE}...")
 

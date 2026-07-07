@@ -12,12 +12,12 @@ Usage:
 """
 
 import argparse
-import cv2
-import numpy as np
+import sys
 from datetime import date, datetime
 from pathlib import Path
-from typing import List, Tuple, Optional
-import sys
+
+import cv2
+import numpy as np
 
 # ---------------------------------------------------------------------------
 # Core Detection Engine
@@ -185,7 +185,7 @@ def detect_petri_dishes(image_path: str | Path, debug: bool = False):
     return final
 
 
-def crop_dish(img: np.ndarray, cx: int, cy: int, r: int, padding: float = 0.05) -> Tuple[np.ndarray, Tuple[int, int, int, int]]:
+def crop_dish(img: np.ndarray, cx: int, cy: int, r: int, padding: float = 0.05) -> tuple[np.ndarray, tuple[int, int, int, int]]:
     """
     Extract a square crop around a detected dish.
 
@@ -274,7 +274,7 @@ MONTH_NUMBERS = {
 }
 
 
-def parse_date_prefix(value: Optional[str], today: Optional[date] = None) -> str:
+def parse_date_prefix(value: str | None, today: date | None = None) -> str:
     """Convert a supported user date to a YYYYMMDD_ filename prefix."""
     if not value or not value.strip():
         return ""
@@ -301,7 +301,7 @@ def parse_date_prefix(value: Optional[str], today: Optional[date] = None) -> str
     return parsed.strftime("%Y%m%d_")
 
 
-def resolve_output_dir(input_path: Path, output: Optional[str]) -> Path:
+def resolve_output_dir(input_path: Path, output: str | None) -> Path:
     """Resolve the CLI output directory, defaulting beside the input."""
     if output:
         return Path(output)

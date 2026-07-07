@@ -22,12 +22,11 @@ import datetime as dt
 import json
 import os
 import re
-import sys
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
-from PIL import Image, ImageTk, ExifTags
+from PIL import ExifTags, Image, ImageTk
 
 # ── Constants ──────────────────────────────────────────────────────────
 IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp"}

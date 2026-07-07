@@ -1,6 +1,6 @@
 # metrics-petri — CLI batch pipeline
 
-`metrics-petri` segments and measures fungal colonies (or any biological sample) growing on petri dishes. It processes a folder of images and writes a ZIP archive containing a CSV results table, a JSON record, per-image overlay composites, and growth-rate charts.
+`metrics-petri` segments and measures fungal colonies (or any biological sample) growing on petri dishes. It processes a folder of images and writes a ZIP archive containing CSV and JSON result tables, `provenance.json`, per-image overlay composites, and growth-rate charts.
 
 No browser or GUI required at run time.
 
@@ -106,6 +106,9 @@ metrics-petri input_images/ --output results/run01.zip
 # Adjust segmentation confidence threshold (default 0.5)
 metrics-petri input_images/ --threshold 0.45
 
+# Calibrate measurements for a 60 mm dish (default: 90 mm)
+metrics-petri input_images/ --dish-size-mm 60
+
 # Custom model checkpoint
 metrics-petri input_images/ --model /path/to/checkpoint.pt
 ```
@@ -124,6 +127,7 @@ If `--metadata` is not given, the CLI looks for `image_metadata.json` and then `
 <user_or_experiment_name>.zip
 ├── analysis_full.csv         one row per image, all metrics
 ├── analysis_full.json        same data as a JSON array
+├── provenance.json           run settings, versions, device, and model checksum
 ├── image_metadata.csv        copy of the input metadata (if supplied)
 ├── image_metadata.json       same metadata as JSON
 ├── overlays/
@@ -163,7 +167,9 @@ The ZIP is named from the `user_name` field in the metadata (e.g. `rex.zip`), fa
 | `rgr_per_day` | day⁻¹ | Relative growth rate (requires dates) |
 | `relative_growth_per_day` | mm² day⁻¹ | Absolute area growth rate (requires dates) |
 
-Scale is derived from the detected dish circumference (default 90 mm). No calibration target required.
+Scale is derived from the detected dish circumference and the configured outside dish
+diameter. The default is 90 mm; pass `--dish-size-mm` when using another size. No
+separate calibration target is required.
 
 ---
 

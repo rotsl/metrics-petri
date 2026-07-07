@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import io
 import math
-import os
 from pathlib import Path
 
 import cv2
@@ -21,18 +20,24 @@ import torch
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from PIL import Image
-from scipy import ndimage
-from skimage import exposure, filters, measure, morphology
-from skimage.filters import frangi, meijering, threshold_local
-from skimage.measure import shannon_entropy
+from skimage import filters, measure, morphology
+from skimage.filters import frangi, meijering
+
+from metrics_petri._model import _select_device
+from metrics_petri._paths import (
+    _HF_FILE,
+    _HF_REPO,
+    _find_model_path,
+    _verify_model_checksum,
+    _verify_model_if_managed,
+)
 
 from .model import SmallUNet
-from metrics_petri._paths import _HF_REPO, _HF_FILE, _DEFAULT_MODEL_CANDIDATES, _find_model_path
 
 # ── constants ──────────────────────────────────────────────────────────────
 CONTAINER_MM = 90.0
 IMAGE_SIZE = 256
-DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
+DEVICE = _select_device()
 
 # ── model ──────────────────────────────────────────────────────────────────
 _model: SmallUNet | None = None
@@ -42,12 +47,14 @@ def _resolve_model_path() -> Path:
     """Return model path, auto-downloading from HuggingFace if not found locally."""
     p = _find_model_path()
     if p:
-        return p
+        return _verify_model_if_managed(p)
     try:
         from huggingface_hub import hf_hub_download
         print(f"[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…", flush=True)
         cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE)
-        return Path(cached)
+        return _verify_model_checksum(Path(cached))
+    except ValueError:
+        raise
     except Exception as exc:
         raise FileNotFoundError(
             "UNet checkpoint not found. Set UNET_MODEL=/path/to/best_area_w_0.7.pt "
@@ -61,7 +68,7 @@ def load_model() -> SmallUNet:
     if _model is None:
         p = _resolve_model_path()
         m = SmallUNet(in_channels=3, out_channels=1, base_channels=16)
-        ckpt = torch.load(p, map_location=DEVICE, weights_only=False)
+        ckpt = torch.load(p, map_location=DEVICE, weights_only=True)
         sd = ckpt["model_state_dict"] if isinstance(ckpt, dict) and "model_state_dict" in ckpt else ckpt
         m.load_state_dict(sd, strict=True)
         m.eval()

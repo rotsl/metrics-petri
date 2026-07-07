@@ -6,6 +6,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+def _select_device() -> str:
+    """Return the best available PyTorch device in CUDA, MPS, CPU order."""
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 class ConvBlock(nn.Module):
     def __init__(self, in_channels: int, out_channels: int) -> None:
         super().__init__()

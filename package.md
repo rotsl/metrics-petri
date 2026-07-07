@@ -29,6 +29,8 @@ Petri dish colony segmentation and morphometric analysis.
                                                ▼
                                           results.zip
                                           ├── analysis_full.csv
+                                          ├── analysis_full.json
+                                          ├── provenance.json
                                           ├── overlays/
                                           └── charts/  ← growth curves with day codes
 ```
@@ -70,7 +72,8 @@ pip install metrics-petri
 metrics-petri input_images/
 ```
 
-Processes every image in the folder and writes a ZIP containing results, overlays, and charts.
+Processes every image in the folder and writes a ZIP containing result tables,
+provenance, overlays, and charts.
 
 ```bash
 # With metadata for growth rate calculations and day-code charts
@@ -85,6 +88,9 @@ metrics-petri input_images/ --output results/run01.zip
 # Adjust segmentation threshold (default 0.5)
 metrics-petri input_images/ --threshold 0.45
 
+# Use the actual outside diameter for non-standard dishes
+metrics-petri input_images/ --dish-size-mm 60
+
 # Custom model checkpoint
 metrics-petri input_images/ --model /path/to/checkpoint.pt
 ```
@@ -95,6 +101,7 @@ metrics-petri input_images/ --model /path/to/checkpoint.pt
 <user_or_experiment_name>.zip
 ├── analysis_full.csv         one row per image, all metrics
 ├── analysis_full.json        same data as a JSON array
+├── provenance.json           run settings, versions, device, and model checksum
 ├── image_metadata.csv        copy of the input metadata (if supplied)
 ├── image_metadata.json       same metadata as JSON
 ├── overlays/                 per-image colony mask composites
@@ -168,7 +175,9 @@ Only fully visible dishes are extracted. Output filenames follow the pattern `{s
 | `rgr_per_day` | day⁻¹ | Relative growth rate (requires dates) |
 | `relative_growth_per_day` | mm² day⁻¹ | Absolute area growth rate (requires dates) |
 
-Scale is derived from the detected dish circumference (default 90 mm). No calibration target required.
+Scale is derived from the detected dish circumference and the configured outside dish
+diameter. The default is 90 mm; pass `--dish-size-mm` when using another size. No
+separate calibration target is required.
 
 ---
 

@@ -37,10 +37,10 @@ classifiers = [
 dependencies = [
   "Pillow>=10.0.0",
   "pandas>=2.0.0",
-  "torch>=2.1.0",
-  "scikit-image>=0.22.0",
+  "torch>=2.1.0,<3",
+  "scikit-image>=0.22.0,<1",
   "scipy>=1.11.0",
-  "numpy>=1.24.0",
+  "numpy>=1.24.0,<3",
   "opencv-python-headless>=4.8.0",
   "matplotlib>=3.7.0",
   "rawpy>=0.21.0",
@@ -52,7 +52,15 @@ gui = [
   "gradio>=6.0.0",
   "pillow-heif>=0.16.0",
 ]
-test = ["pytest>=8.0"]
+test = [
+  "pytest>=8.0",
+  "ruff>=0.6.0",
+]
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.6",
+  "mkdocstrings[python]>=0.29",
+]
 
 [project.scripts]
 metrics-petri          = "metrics_petri.pipelinesam.cli:main"
@@ -80,4 +88,13 @@ include = ["metrics_petri*"]
 "metrics_petri"            = ["py.typed"]
 "metrics_petri.pipeline"   = ["*.py"]
 "metrics_petri.pipelinesam" = ["*.py"]
-"metrics_petri.models"     = ["*.pt"]
+"metrics_petri.models"     = ["*.pt", "*.sha256", "MODEL_CARD.md"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = ["notebooks"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501"]

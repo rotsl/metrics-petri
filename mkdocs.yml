@@ -1,0 +1,63 @@
+site_name: Metrics Petri
+site_description: Petri-dish colony segmentation and morphometric analysis
+site_url: https://rotsl.github.io/metrics-petri/
+repo_url: https://github.com/rotsl/metrics-petri
+repo_name: rotsl/metrics-petri
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - User guide: user-guide.md
+  - Batch pipeline: batch-pipeline.md
+  - Model card: model-card.md
+  - API reference:
+      - Overview: api/index.md
+      - Model architecture: api/model.md
+      - Analysis: api/analysis.md
+      - Reporting: api/reporting.md
+      - Batch CLI: api/batch.md
+      - Dish cropper: api/cropper.md
+  - Project:
+      - Contributing: contributing.md
+      - Code of Conduct: code-of-conduct.md
+      - Security: security.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+          options:
+            docstring_style: google
+            members_order: source
+            show_root_heading: true
+            show_root_full_path: false
+            show_source: true
+            show_if_no_docstring: true
+            merge_init_into_class: true
+            separate_signature: true
+            signature_crossrefs: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.superfences
+
+strict: true

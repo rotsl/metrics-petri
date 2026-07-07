@@ -11,12 +11,8 @@ from __future__ import annotations
 import csv
 import datetime as dt
 import json
-import os
 import re
-import signal
 import tempfile
-import threading
-import time as _time
 import zipfile
 from pathlib import Path
 
@@ -25,7 +21,9 @@ import gradio as gr
 import numpy as np
 import pandas as pd
 import torch
-from PIL import Image, ExifTags
+from PIL import ExifTags, Image
+
+from metrics_petri._provenance import build_provenance
 
 from .analysis import (
     CONTAINER_MM,
@@ -276,25 +274,6 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
         )
         results_dl = gr.File(label="⬇️ Download analysis zip", interactive=False)
 
-    with gr.Group(visible=False, elem_id="close-confirm-panel") as close_panel:
-        gr.HTML(
-            "<div style='border:2px solid #ef4444;border-radius:8px;padding:16px;"
-            "background:#fff5f5;margin:8px 0'>"
-            "<h3 style='color:#dc2626;margin:0 0 8px'>Stop metrics-petri server?</h3>"
-            "<p style='margin:0 0 10px'>This will kill the process on <strong>port 7860</strong>.</p>"
-            "<p style='margin:0'><strong>To restart:</strong></p>"
-            "<pre style='background:#f1f5f9;padding:8px;border-radius:4px;"
-            "font-size:0.9em;margin:6px 0'>metrics-petri-gui</pre>"
-            "<p style='margin:4px 0'>or from the repository:</p>"
-            "<pre style='background:#f1f5f9;padding:8px;border-radius:4px;"
-            "font-size:0.9em;margin:6px 0'>make run-gui</pre>"
-            "</div>"
-        )
-        close_status = gr.Markdown("")
-        with gr.Row():
-            cancel_close_btn = gr.Button("Cancel", variant="secondary")
-            confirm_close_btn = gr.Button("⏹ Shut down now", variant="stop")
-
     with gr.Row():
         gr.HTML(
             "<div style='padding-top:10px;border-top:1px solid #e5e7eb;"
@@ -305,7 +284,6 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
             " &nbsp;·&nbsp; MIT"
             "</div>"
         )
-        close_btn = gr.Button("⏹ Close", variant="stop", size="sm", scale=0)
 
     # ── event handlers ─────────────────────────────────────────────────────
 
@@ -514,7 +492,7 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
                     raise RuntimeError(f"Cannot read: {p}")
 
                 img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-                from .analysis import IMAGE_SIZE, DEVICE
+                from .analysis import DEVICE, IMAGE_SIZE
                 img_resized = cv2.resize(img_rgb, (IMAGE_SIZE, IMAGE_SIZE))
                 model = load_model()
                 x = torch.from_numpy(img_resized.transpose(2, 0, 1)).float() / 255.0
@@ -633,6 +611,19 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
         jp = Path(tmp) / "analysis_full.json"
         with open(jp, "w") as f:
             json.dump(all_results, f, indent=2, default=str)
+        provenance_p = Path(tmp) / "provenance.json"
+        with open(provenance_p, "w") as f:
+            json.dump(
+                build_provenance(
+                    interface="metrics-petri-gui",
+                    threshold=thresh,
+                    dish_size_mm=CONTAINER_MM,
+                    device=DEVICE,
+                ),
+                f,
+                indent=2,
+            )
+            f.write("\n")
         for i, (cimg, cap) in enumerate(chart_items):
             cimg.save(str(Path(tmp) / f"chart_{i}.png"))
 
@@ -690,33 +681,8 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
         [run_st, overlay_gallery, chart_gallery, results_df, results_dl, results_st],
     )
 
-    # ── close-server handlers ───────────────────────────────────────────────
-
-    close_btn.click(
-        lambda: gr.update(visible=True),
-        outputs=[close_panel],
-    )
-
-    cancel_close_btn.click(
-        lambda: (gr.update(visible=False), gr.update(value="")),
-        outputs=[close_panel, close_status],
-    )
-
-    def on_confirm_close():
-        def _kill():
-            _time.sleep(1.2)          # allow response to reach the browser
-            os.kill(os.getpid(), signal.SIGTERM)
-        threading.Thread(target=_kill, daemon=True).start()
-        return gr.update(value="🔴 Shutting down…")
-
-    confirm_close_btn.click(
-        on_confirm_close,
-        outputs=[close_status],
-    )
-
-
 def main() -> None:
-    demo.launch(server_name="0.0.0.0", server_port=7860, css=CSS)
+    demo.launch(server_name="127.0.0.1", server_port=7860, css=CSS)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1 @@
+--8<-- "metrics_petri/pipelinesam/README.md"

@@ -5,6 +5,28 @@ from __future__ import annotations
 
 import argparse
 import os
+import warnings
+
+_LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
+
+
+def _parse_auth(value: str) -> tuple[str, str]:
+    """Parse a Gradio USER:PASS credential pair."""
+    username, separator, password = value.partition(":")
+    if not separator or not username or not password:
+        raise argparse.ArgumentTypeError("authentication must use USER:PASS with both values set")
+    return username, password
+
+
+def _warn_if_exposed(host: str, auth: tuple[str, str] | None) -> None:
+    """Warn when the GUI is exposed beyond loopback without authentication."""
+    if host not in _LOOPBACK_HOSTS and auth is None:
+        warnings.warn(
+            f"GUI is binding to non-loopback host {host!r} without authentication; "
+            "use --auth USER:PASS before exposing it to a network",
+            RuntimeWarning,
+            stacklevel=2,
+        )
 
 
 def _importable(mod: str) -> bool:
@@ -87,8 +109,15 @@ def build_parser() -> argparse.ArgumentParser:
         prog="metrics-petri-gui",
         description="Launch the metrics-petri Gradio web interface.",
     )
-    parser.add_argument("--host", default="0.0.0.0", help="Bind host (default: 0.0.0.0)")
+    parser.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=7860, help="Bind port (default: 7860)")
+    parser.add_argument(
+        "--auth",
+        type=_parse_auth,
+        default=None,
+        metavar="USER:PASS",
+        help="Require a username and password for GUI access",
+    )
     parser.add_argument(
         "--no-browser", action="store_true", help="Do not open browser automatically"
     )
@@ -102,16 +131,18 @@ def main() -> None:
         _run_doctor()
         return
     args = build_parser().parse_args()
+    _warn_if_exposed(args.host, args.auth)
 
     if args.model:
         os.environ["UNET_MODEL"] = args.model
 
-    from .app import demo, CSS
+    from .app import CSS, demo
 
     demo.launch(
         server_name=args.host,
         server_port=args.port,
         inbrowser=not args.no_browser,
+        auth=args.auth,
         css=CSS,
     )
 

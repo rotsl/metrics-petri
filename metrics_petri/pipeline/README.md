@@ -22,16 +22,28 @@ The `[gui]` extra adds Gradio and HEIF/RAW image support. If you only need the C
 metrics-petri-gui
 ```
 
-The interface opens in your default browser at `http://localhost:7860`.
+The interface opens in your default browser at `http://localhost:7860` and listens only
+on the local machine by default.
 
 Options:
 
 ```bash
 metrics-petri-gui --port 8080               # change port
-metrics-petri-gui --host 127.0.0.1          # restrict to localhost only
 metrics-petri-gui --no-browser              # don't open browser automatically
 metrics-petri-gui --model /path/to/model.pt # custom UNet checkpoint
+metrics-petri-gui --auth user:password       # require login
 ```
+
+To serve the GUI to other machines, bind it to a network interface and require
+authentication:
+
+```bash
+metrics-petri-gui --host 0.0.0.0 --auth user:password
+```
+
+!!! warning
+    Binding to a non-loopback address exposes uploaded images, results, and GUI actions
+    to the network. The CLI warns when a non-loopback host is used without `--auth`.
 
 ---
 
@@ -77,7 +89,7 @@ Drag and drop or click to upload. Accepted formats: JPEG, PNG, TIFF, BMP, WebP, 
 
 A table shows each uploaded filename alongside auto-detected `experiment_date` and `image_date` fields (`YYYY-MM-DD`).
 
-- Dates are auto-detected from the filename (`YYYYMMDD` pattern), EXIF `DateTimeOriginal`, or file modification time.
+- Dates are auto-detected from the filename (`YYYYMMDD` pattern) or EXIF `DateTimeOriginal`. File modification time is not used because uploaded files are temporary Gradio copies.
 - Edit any date by clicking the cell. Day codes (`d01`, `d02`, …) update automatically.
 - Filling in dates enables growth rate calculations and correctly labelled chart axes.
 - Leave blank to analyse morphology only.
@@ -112,8 +124,10 @@ Click **Run pipeline**. Progress is shown per image.
 <user_or_experiment_name>.zip
 ├── analysis_full.csv         one row per image, all metrics
 ├── analysis_full.json        same data as a JSON array
+├── provenance.json           run settings, versions, device, and model checksum
 ├── image_metadata.csv        copy of the metadata used
 ├── image_metadata.json       same metadata as JSON
+├── chart_*.png               growth-rate charts, when enough dated images exist
 └── overlays/
     ├── image01_raw.jpg
     ├── image01_mask.jpg

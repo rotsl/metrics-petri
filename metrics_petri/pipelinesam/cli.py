@@ -10,6 +10,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import os
 import sys
@@ -18,6 +19,7 @@ import zipfile
 from pathlib import Path
 
 import cv2
+import matplotlib
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -25,14 +27,37 @@ from scipy import ndimage
 from skimage import filters, measure, morphology
 from skimage.filters import threshold_local
 
-import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+from metrics_petri._provenance import build_provenance
 
 IMAGE_EXTS = {
     ".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp", ".gif",
     ".heic", ".heif", ".dng", ".cr2", ".nef", ".arw", ".raf", ".orf", ".rw2",
 }
+DEFAULT_DISH_SIZE_MM = 90.0
+_METADATA_OPTIONAL_COLUMNS = (
+    "experiment_name",
+    "experiment_date",
+    "image_date",
+    "day_code",
+    "user_name",
+    "plates_count",
+)
+
+
+def _positive_float(value: str) -> float:
+    """Parse a strictly positive floating-point CLI value."""
+    parsed = float(value)
+    if not math.isfinite(parsed) or parsed <= 0:
+        raise argparse.ArgumentTypeError("value must be finite and greater than zero")
+    return parsed
+
+
+def _pixel_scale(dish_size_mm: float, radius_px: float) -> float:
+    """Return millimetres per pixel for a known dish diameter and radius."""
+    return (dish_size_mm / 2) / max(radius_px, 1)
 
 
 def _detect_image_date(path: Path) -> str:
@@ -42,6 +67,7 @@ def _detect_image_date(path: Path) -> str:
     used — it reflects copy/download time, not capture time.
     """
     import re as _re
+
     from PIL import ExifTags as _ExifTags
     _DATE_RE = _re.compile(r"(20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])")
     # 1. EXIF DateTimeOriginal
@@ -70,6 +96,70 @@ def _detect_image_date(path: Path) -> str:
 
 def _find_images(root: Path) -> list[Path]:
     return sorted(p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in IMAGE_EXTS)
+
+
+def _resolve_metadata_image_path(input_dir: Path, image_path: object) -> Path:
+    """Resolve a metadata image path and require it to remain inside input_dir."""
+    root = input_dir.expanduser().resolve()
+    relative = Path(str(image_path))
+    if relative.is_absolute():
+        raise ValueError(f"Metadata image path must be relative to {root}: {relative}")
+    candidate = (root / relative).resolve()
+    if not candidate.is_relative_to(root):
+        raise ValueError(f"Metadata image path escapes input directory {root}: {relative}")
+    return candidate
+
+
+def _build_metadata_tasks(
+    input_dir: Path, metadata: pd.DataFrame
+) -> list[tuple[Path, dict]]:
+    """Build in-root image tasks from metadata, skipping missing files."""
+    tasks: list[tuple[Path, dict]] = []
+    for _, row in metadata.iterrows():
+        image_path = _resolve_metadata_image_path(input_dir, row["image_path"])
+        if image_path.is_file():
+            tasks.append((image_path, row.to_dict()))
+    return tasks
+
+
+def _validate_metadata(metadata: pd.DataFrame, source: Path) -> pd.DataFrame:
+    """Validate the structural metadata contract while preserving custom columns."""
+    if metadata.empty and not len(metadata.columns):
+        metadata = pd.DataFrame(columns=["image_path"])
+    if "image_path" not in metadata.columns:
+        raise ValueError(f"Metadata {source} is missing required column 'image_path'")
+
+    image_paths = metadata["image_path"]
+    invalid = image_paths.isna() | image_paths.astype(str).str.strip().eq("")
+    if invalid.any():
+        indices = [str(index) for index in metadata.index[invalid].tolist()]
+        raise ValueError(
+            f"Metadata {source} has blank image_path values at row indices: "
+            + ", ".join(indices)
+        )
+
+    metadata = metadata.copy()
+    for column in _METADATA_OPTIONAL_COLUMNS:
+        if column not in metadata.columns:
+            metadata[column] = ""
+    return metadata
+
+
+def _load_metadata(path: Path) -> pd.DataFrame:
+    """Load and structurally validate CSV or record-oriented JSON metadata."""
+    if path.suffix.lower() == ".json":
+        try:
+            records = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Metadata JSON is invalid: {path}: {exc.msg}") from exc
+        if not isinstance(records, list) or not all(
+            isinstance(record, dict) for record in records
+        ):
+            raise ValueError(f"Metadata JSON must be a list of objects: {path}")
+        metadata = pd.DataFrame(records)
+    else:
+        metadata = pd.read_csv(path)
+    return _validate_metadata(metadata, path)
 
 
 def _load_as_pil(path: Path) -> Image.Image:
@@ -146,10 +236,14 @@ def _process_image(
     img_path: Path,
     meta: dict,
     threshold: float,
+    dish_size_mm: float = DEFAULT_DISH_SIZE_MM,
 ) -> tuple[dict, dict[str, Image.Image]]:
     """Run full pipeline on one image; return (metrics_row, overlay_images)."""
+    from skimage import exposure
+    from skimage.filters import frangi, meijering
+
     from .pipeline import (
-        CONTAINER_MM,
+        _compute_texture_metrics,
         build_mask,
         circle_mask,
         detect_container,
@@ -158,9 +252,6 @@ def _process_image(
         infer_mask,
         largest_component,
     )
-    from skimage.filters import frangi, meijering
-    from skimage.measure import shannon_entropy
-    from skimage import exposure
 
     model = get_model()
     img_pil = _load_as_pil(img_path)
@@ -169,7 +260,7 @@ def _process_image(
     h, w = img.shape[:2]
 
     cx, cy, r_cont = detect_container(gray)
-    px_to_mm = (CONTAINER_MM / 2) / max(r_cont, 1)
+    px_to_mm = _pixel_scale(dish_size_mm, r_cont)
     cont_mask = circle_mask(w, h, cx, cy, r_cont)
 
     unet = infer_mask(model, img, threshold=threshold) & cont_mask
@@ -195,8 +286,7 @@ def _process_image(
     cy_c, cx_c = props.centroid
     centre_delta_mm = float(np.hypot(cx_c - cx, cy_c - cy) * px_to_mm)
     edge_roughness = props.perimeter / (2 * np.pi * radius_px) if radius_px > 0 else float("nan")
-    entropy = float(shannon_entropy(gray))
-    texture_std = float(gray.std())
+    entropy, texture_std = _compute_texture_metrics(gray, mask)
 
     crack_px = int(crack.sum())
     crack_area_mm2 = crack_px * px_to_mm**2
@@ -227,7 +317,7 @@ def _process_image(
         "edge_roughness": round(edge_roughness, 6) if not math.isnan(edge_roughness) else "",
         "centre_delta_mm": round(centre_delta_mm, 4),
         "entropy": round(entropy, 6),
-        "texture_std": round(float(gray.std()), 6),
+        "texture_std": round(texture_std, 6),
         "crack_px": crack_px,
         "crack_area_mm2": round(crack_area_mm2, 6),
         "crack_coverage_pct": round(crack_cov_pct, 4),
@@ -359,21 +449,11 @@ def run_batch(
     output_zip: Path,
     threshold: float = 0.5,
     metadata_csv: Path | None = None,
+    dish_size_mm: float = DEFAULT_DISH_SIZE_MM,
 ) -> None:
     if metadata_csv and metadata_csv.exists():
-        if metadata_csv.suffix.lower() == ".json":
-            import json as _json
-            meta_df = pd.DataFrame(_json.loads(metadata_csv.read_text(encoding="utf-8")))
-        else:
-            meta_df = pd.read_csv(metadata_csv)
-        for col in ("experiment_name", "experiment_date", "image_date", "day_code", "user_name", "plates_count"):
-            if col not in meta_df.columns:
-                meta_df[col] = ""
-        tasks = [
-            (input_dir / str(r["image_path"]), r.to_dict())
-            for _, r in meta_df.iterrows()
-            if (input_dir / str(r["image_path"])).exists()
-        ]
+        meta_df = _load_metadata(metadata_csv)
+        tasks = _build_metadata_tasks(input_dir, meta_df)
     else:
         paths = _find_images(input_dir)
         # Auto-detect image dates; anchor experiment_date to earliest found date
@@ -403,7 +483,9 @@ def run_batch(
     for i, (img_path, meta) in enumerate(tasks, 1):
         print(f"  [{i}/{len(tasks)}] {img_path.name}", flush=True)
         try:
-            row, overlays = _process_image(img_path, meta, threshold)
+            row, overlays = _process_image(
+                img_path, meta, threshold, dish_size_mm=dish_size_mm
+            )
             results.append(row)
             all_overlays.update(overlays)
         except Exception as exc:
@@ -482,9 +564,26 @@ def run_batch(
     charts_dir = tmp / "charts"
     _write_charts(df, charts_dir)
 
+    from .pipeline import DEVICE
+    provenance_p = tmp / "provenance.json"
+    provenance_p.write_text(
+        json.dumps(
+            build_provenance(
+                interface="metrics-petri-cli",
+                threshold=threshold,
+                dish_size_mm=dish_size_mm,
+                device=DEVICE,
+            ),
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
     with zipfile.ZipFile(output_zip, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.write(csv_p, "analysis_full.csv")
         zf.write(json_p, "analysis_full.json")
+        zf.write(provenance_p, "provenance.json")
         for f in sorted(overlays_dir.glob("*.jpg")):
             zf.write(f, f"overlays/{f.name}")
         for f in sorted(charts_dir.glob("*.png")):
@@ -495,11 +594,8 @@ def run_batch(
     print(f"✓  Output: {output_zip}")
 
 
-def main() -> None:
-    import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "doctor":
-        _run_doctor()
-        return
+def build_parser() -> argparse.ArgumentParser:
+    """Build the batch CLI argument parser."""
     parser = argparse.ArgumentParser(
         prog="metrics-petri",
         description="metrics-petri — petri dish colony analysis (no GUI)",
@@ -530,7 +626,21 @@ def main() -> None:
         default=None,
         help="Path to SmallUNet checkpoint (.pt)",
     )
-    args = parser.parse_args()
+    parser.add_argument(
+        "--dish-size-mm",
+        type=_positive_float,
+        default=DEFAULT_DISH_SIZE_MM,
+        help="Outside diameter of the Petri dish in millimetres",
+    )
+    return parser
+
+
+def main() -> None:
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "doctor":
+        _run_doctor()
+        return
+    args = build_parser().parse_args()
 
     if args.model:
         os.environ["UNET_MODEL"] = args.model
@@ -554,7 +664,13 @@ def main() -> None:
         metadata_csv = input_dir / "image_metadata.csv"
 
     try:
-        run_batch(input_dir, output_zip, threshold=args.threshold, metadata_csv=metadata_csv)
+        run_batch(
+            input_dir,
+            output_zip,
+            threshold=args.threshold,
+            metadata_csv=metadata_csv,
+            dish_size_mm=args.dish_size_mm,
+        )
     except FileNotFoundError as exc:
         print(f"error: {exc}", file=sys.stderr)
         sys.exit(1)

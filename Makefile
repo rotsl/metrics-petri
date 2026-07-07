@@ -35,10 +35,12 @@ download-model:
 	@if [ -f "$(UNET_MODEL)" ]; then \
 		echo "  ✓  Model present: $(UNET_MODEL)"; \
 	else \
-		echo "  ↓  Downloading UNet checkpoint from GitHub…"; \
+		echo "  ↓  Downloading UNet checkpoint from HuggingFace…"; \
 		curl -fL --progress-bar -o "$(UNET_MODEL)" "$(MODEL_URL)"; \
 		echo "  ✓  Saved to $(UNET_MODEL)"; \
 	fi
+	@$(PYTHON) -c "from pathlib import Path; from metrics_petri._paths import _verify_model_checksum; _verify_model_checksum(Path('$(UNET_MODEL)'))"
+	@echo "  ✓  SHA-256 verified"
 
 model-status:
 	@echo "UNet checkpoint: $(UNET_MODEL)"

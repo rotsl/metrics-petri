@@ -1,0 +1,1 @@
+--8<-- "metrics_petri/models/MODEL_CARD.md"

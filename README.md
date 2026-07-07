@@ -24,7 +24,7 @@ flowchart TD
     A -->|"images"| D["metrics-petri<br/>(batch analysis)"]
     C -->|"--metadata"| D
 
-    D --> E["📦 results.zip<br/>─────────────────────────<br/>analysis_full.csv<br/>overlays/ · charts/"]
+    D --> E["📦 results.zip<br/>─────────────────────────<br/>analysis_full.csv · analysis_full.json<br/>provenance.json<br/>overlays/ · charts/"]
 ```
 
 `metrics-petri-metadata` is optional — `metrics-petri` can run on images alone, but supplying metadata enables growth-rate calculations and day-coded charts.
@@ -88,6 +88,9 @@ To use a custom checkpoint:
 UNET_MODEL=/path/to/checkpoint.pt make run-cli INPUT=input_images/
 ```
 
+Training provenance, validation metrics, intended use, and limitations are documented
+in the [`MODEL_CARD.md`](metrics_petri/models/MODEL_CARD.md).
+
 ---
 
 ## CLI usage (batch pipeline)
@@ -104,9 +107,12 @@ metrics-petri input_images/ --metadata input_images/image_metadata.csv
 
 # Adjust segmentation threshold
 metrics-petri input_images/ --threshold 0.45
+
+# Calibrate measurements for a 60 mm dish (default: 90 mm)
+metrics-petri input_images/ --dish-size-mm 60
 ```
 
-Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, per-image overlays, and growth-curve charts with day codes on the x-axis.
+Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, `provenance.json`, per-image overlays, and growth-curve charts with day codes on the x-axis.
 
 Full CLI documentation: [`metrics_petri/pipelinesam/README.md`](metrics_petri/pipelinesam/README.md)
 
@@ -133,6 +139,20 @@ metrics-petri-crop -i input_images/ -o cropped/
 Output is saved to a `cropped/` subfolder beside the input by default. Only fully visible dishes are extracted; partial dishes at image edges are ignored.
 
 Full option reference: `metrics-petri-crop --help`
+
+---
+
+## Documentation
+
+The project site uses MkDocs Material and generates its Python API reference from
+docstrings with mkdocstrings.
+
+```bash
+pip install -e ".[docs]"
+mkdocs serve
+```
+
+Use `mkdocs build --strict` to run the same documentation build used for GitHub Pages.
 
 ---
 
@@ -205,7 +225,9 @@ metrics-petri/
 | Relative growth rate | day⁻¹ |
 | Area growth rate | mm² day⁻¹ |
 
-Scale is derived from the detected dish circumference (default 90 mm). No calibration target required.
+Scale is derived from the detected dish circumference and the configured outside dish
+diameter. The default is 90 mm; pass `--dish-size-mm` when using another size. No
+separate calibration target is required.
 
 ---
 
@@ -215,6 +237,14 @@ Scale is derived from the detected dish circumference (default 90 mm). No calibr
 | ------- | ----------- |
 | [**petrimodel**](https://github.com/rotsl/petrimodel) | Trains and evaluates the SmallUNet used by `metrics-petri`. Includes LabelMe JSON annotations, training data, sweep plots, trained checkpoints, and a PySide6 desktop tool for manual diameter validation against model-generated masks. |
 | [**Automator**](https://github.com/rotsl/Automator) | Robotic imaging system at The Sainsbury Laboratory, Norwich. Photographs QR-labelled petri dishes automatically at set intervals over the course of an experiment. Images produced by Automator are the intended input for `metrics-petri`. Documentation: [rotsl.github.io/Automator](https://rotsl.github.io/Automator/) |
+
+---
+
+## Community
+
+Contributions are welcome; see [`CONTRIBUTING.md`](CONTRIBUTING.md) for the development
+workflow. Participation is governed by the [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md),
+and security issues should be reported according to [`SECURITY.md`](SECURITY.md).
 
 ---
 

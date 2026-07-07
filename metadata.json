@@ -1,4 +1,0 @@
-{
-  "name": "metrics-petri",
-  "description": "Petri dish colony segmentation and morphometric analysis. Measures area, diameter, edge roughness, crack burden, texture entropy, and growth rates from time-series images using a compact U-Net checkpoint."
-}
