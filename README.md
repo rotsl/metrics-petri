@@ -248,7 +248,7 @@ metrics-petri/
 
 Scale is derived from the detected dish circumference and the configured outside dish
 diameter. The default is 90 mm; pass `--dish-size-mm` when using another size. No
-separate calibration target is required.
+separate calibration target required.
 
 ---
 
