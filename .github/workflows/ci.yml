@@ -17,7 +17,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install system dependencies
         run: sudo apt-get install -y python3-tk
-      - run: pip install -e ".[test]"
+      - run: pip install -e ".[test,gui]"
       - run: ruff check .
       - run: mypy --python-version "${{ matrix.python-version }}" metrics_petri
       - run: pyright

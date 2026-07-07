@@ -295,7 +295,7 @@ MIT — see [`LICENSE`](LICENSE).
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.1.2},
+version = {2.1.3},
 year = {2026}
 }
 ```

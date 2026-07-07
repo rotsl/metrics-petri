@@ -4,6 +4,10 @@ Notable changes to Metrics Petri are documented here.
 
 ## Unreleased
 
+No unreleased changes yet.
+
+## 2.1.3 - 2026-07-07
+
 ### Added
 
 - Add CodeQL, Bandit, mypy, Pyright, coverage, check-manifest, and
@@ -28,6 +32,8 @@ Notable changes to Metrics Petri are documented here.
   rawpy, and Hugging Face Hub to reduce untested dependency drift.
 - Run mypy in CI with the active workflow Python version so dependency stubs are
   parsed with matching syntax support.
+- Install GUI extras during CI and publish validation so pyright can resolve optional
+  GUI and HEIF imports.
 - Remove the obsolete Streamlit metadata UI module and update the legacy pipeline
   metadata error message to point users at `metrics-petri-metadata`.
 - Route model-resolution diagnostics through logging while preserving user-facing CLI

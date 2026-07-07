@@ -25,7 +25,7 @@ jobs:
         run: sudo apt-get install -y python3-tk
 
       - name: Install package and test tools
-        run: pip install -e ".[test]"
+        run: pip install -e ".[test,gui]"
 
       - name: Run lint
         run: ruff check .
