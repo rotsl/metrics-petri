@@ -4,6 +4,10 @@ Notable changes to Metrics Petri are documented here.
 
 ## Unreleased
 
+No unreleased changes yet.
+
+## 2.1.2 - 2026-07-07
+
 ### Security
 
 - Load PyTorch checkpoints with `weights_only=True`.
