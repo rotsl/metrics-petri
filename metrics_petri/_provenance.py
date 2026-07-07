@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import platform
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 
 from . import __version__
@@ -29,7 +29,7 @@ def build_provenance(
 ) -> dict:
     """Return a JSON-serialisable provenance record for an analysis run."""
     return {
-        "created_at_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "created_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "interface": interface,
         "versions": {
             "python": sys.version.split()[0],
