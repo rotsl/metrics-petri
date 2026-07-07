@@ -6,6 +6,15 @@ Notable changes to Metrics Petri are documented here.
 
 No unreleased changes yet.
 
+## 2.1.5 - 2026-07-07
+
+### Fixed
+
+- Cap supported Python below 3.14 so installers do not select environments where
+  PyTorch wheels are unavailable.
+- Report stale or mismatched metadata image paths clearly instead of falling through
+  to a generic "No images found" error.
+
 ## 2.1.4 - 2026-07-07
 
 ### Fixed

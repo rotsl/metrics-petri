@@ -473,6 +473,12 @@ def run_batch(
     if metadata_csv and metadata_csv.exists():
         meta_df = _load_metadata(metadata_csv)
         tasks = _build_metadata_tasks(input_dir, meta_df)
+        if meta_df.shape[0] and not tasks:
+            raise FileNotFoundError(
+                f"No metadata image_path entries in {metadata_csv} matched files "
+                f"under {input_dir}. Update the metadata file, pass a matching "
+                "--metadata file, or remove/rename the metadata file to scan images directly."
+            )
     else:
         paths = _find_images(input_dir)
         # Auto-detect image dates; anchor experiment_date to earliest found date

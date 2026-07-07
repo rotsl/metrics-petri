@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 title: "Metrics Petri: petri dish colony segmentation and morphometric analysis"
-version: "2.1.4"
+version: "2.1.5"
 date-released: "2026-07-07"
 authors:
   - name: "Rohan R"
@@ -13,7 +13,7 @@ url: "https://github.com/rotsl/metrics-petri"
 preferred-citation:
   type: software
   title: "Metrics Petri: petri dish colony segmentation and morphometric analysis"
-  version: "2.1.4"
+  version: "2.1.5"
   authors:
     - name: "Rohan R"
       affiliation: "The Sainsbury Laboratory, Norwich"

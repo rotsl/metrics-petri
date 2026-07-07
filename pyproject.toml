@@ -7,7 +7,7 @@ name = "metrics-petri"
 dynamic = ["version"]
 description = "Petri dish colony segmentation and morphometric analysis for fungal growth experiments"
 readme = { file = "package.md", content-type = "text/markdown" }
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 authors = [{ name = "Rohan R" }]
 maintainers = [{ name = "Rohan R" }]
 license = "MIT"
@@ -146,7 +146,7 @@ exclude_dirs = ["tests", "notebooks", "site", "build", "dist"]
 skips = ["B110", "B112"]
 
 [tool.bumpversion]
-current_version = "2.1.4"
+current_version = "2.1.5"
 parse = '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
 serialize = ["{major}.{minor}.{patch}"]
 commit = false

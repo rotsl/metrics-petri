@@ -71,8 +71,11 @@ At run time the checkpoint is located in this order:
 
 ## CLI batch pipeline
 
+Use Python 3.10–3.13. If your system `python3` is newer than that, call a
+supported interpreter explicitly, such as `python3.12`.
+
 ```bash
-python3 -m venv petrienv
+python3.12 -m venv petrienv
 source petrienv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install metrics-petri
@@ -244,7 +247,7 @@ MIT — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICENSE)
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.1.4},
+version = {2.1.5},
 year = {2026}
 }
 ```

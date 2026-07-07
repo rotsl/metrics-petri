@@ -8,6 +8,7 @@ import pytest
 from metrics_petri.pipelinesam.cli import (
     _build_metadata_tasks,
     _resolve_metadata_image_path,
+    run_batch,
 )
 
 
@@ -67,3 +68,14 @@ def test_metadata_tasks_skip_missing_in_root_files(tmp_path):
     metadata = pd.DataFrame([{"image_path": "missing.jpg"}])
 
     assert _build_metadata_tasks(input_dir, metadata) == []
+
+
+def test_run_batch_reports_metadata_paths_that_match_no_files(tmp_path):
+    input_dir = tmp_path / "input"
+    input_dir.mkdir()
+    (input_dir / "actual.jpg").touch()
+    metadata_csv = input_dir / "image_metadata.csv"
+    metadata_csv.write_text("image_path\nmissing.jpg\n", encoding="utf-8")
+
+    with pytest.raises(FileNotFoundError, match="No metadata image_path entries"):
+        run_batch(input_dir, tmp_path / "analysis.zip", metadata_csv=metadata_csv, seed=None)
