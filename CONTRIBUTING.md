@@ -70,12 +70,15 @@ Run static checks:
 
 ```bash
 venv/bin/python -m ruff check .
-venv/bin/python -m mypy metrics_petri
+venv/bin/python -m mypy --python-version 3.13 metrics_petri
 venv/bin/pyright
 venv/bin/bandit -c pyproject.toml -r metrics_petri
 venv/bin/check-manifest --no-build-isolation
 venv/bin/metrics-petri doctor
 ```
+
+Use the Python minor version matching your active virtual environment for local mypy
+runs; CI checks mypy across Python 3.10 through 3.13.
 
 For documentation changes, build the site in strict mode:
 
@@ -109,7 +112,12 @@ Before publishing a GitHub Release:
   all contain the new version;
 - run tests, strict docs build, and package build checks;
 - include the official model checkpoint SHA-256 from
-  `metrics_petri/models/best_area_w_0.7.pt.sha256` in the GitHub Release notes; and
+  `metrics_petri/models/best_area_w_0.7.pt.sha256` in the GitHub Release notes;
+- confirm PyPI Trusted Publishing is configured for `rotsl/metrics-petri` and
+  `.github/workflows/publish.yml`;
+- confirm the release workflow uploads the built wheel and source distribution
+  artifacts;
+- confirm GitHub build-provenance attestations are generated for `dist/*`; and
 - confirm the release tag matches `metrics_petri.__version__`.
 
 ## Pull requests

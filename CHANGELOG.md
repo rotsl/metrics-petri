@@ -17,11 +17,17 @@ Notable changes to Metrics Petri are documented here.
 - Refuse unauthenticated Gradio GUI launches on non-loopback hosts.
 - Pin the fallback model-download revision and keep checkpoint SHA-256 verification
   in the runtime path.
+- Switch the PyPI release workflow to Trusted Publishing, run the validation gate
+  before publishing, and retain built distributions as workflow artifacts.
+- Generate GitHub build-provenance attestations for release wheel and source
+  distribution artifacts.
 
 ### Changed
 
 - Add major-version upper bounds for Pillow, pandas, SciPy, OpenCV, Matplotlib,
   rawpy, and Hugging Face Hub to reduce untested dependency drift.
+- Run mypy in CI with the active workflow Python version so dependency stubs are
+  parsed with matching syntax support.
 - Remove the obsolete Streamlit metadata UI module and update the legacy pipeline
   metadata error message to point users at `metrics-petri-metadata`.
 - Route model-resolution diagnostics through logging while preserving user-facing CLI

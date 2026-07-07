@@ -19,7 +19,7 @@ jobs:
         run: sudo apt-get install -y python3-tk
       - run: pip install -e ".[test]"
       - run: ruff check .
-      - run: mypy metrics_petri
+      - run: mypy --python-version "${{ matrix.python-version }}" metrics_petri
       - run: pyright
       - run: metrics-petri doctor
       - run: pytest --cov=metrics_petri --cov-report=term-missing

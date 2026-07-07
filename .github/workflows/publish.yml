@@ -8,8 +8,53 @@ permissions:
   contents: read
 
 jobs:
-  build-and-publish:
+  test:
     runs-on: ubuntu-latest
+    env:
+      MPLCONFIGDIR: .mplconfig
+
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: sudo apt-get install -y python3-tk
+
+      - name: Install package and test tools
+        run: pip install -e ".[test]"
+
+      - name: Run lint
+        run: ruff check .
+
+      - name: Run mypy
+        run: mypy --python-version 3.11 metrics_petri
+
+      - name: Run pyright
+        run: pyright
+
+      - name: Run diagnostics
+        run: metrics-petri doctor
+
+      - name: Run tests
+        run: pytest --cov=metrics_petri --cov-report=term-missing
+
+      - name: Run Bandit
+        run: bandit -c pyproject.toml -r metrics_petri
+
+      - name: Check manifest
+        run: check-manifest --no-build-isolation
+
+  build-and-publish:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
 
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -38,7 +83,18 @@ jobs:
       - name: Validate distributions
         run: python -m twine check --strict dist/*
 
+      - name: Generate artifact attestations
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+        with:
+          subject-path: dist/*
+
+      - name: Upload distributions artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: python-distributions
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}

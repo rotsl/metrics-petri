@@ -210,12 +210,12 @@ The notebook is not distributed with the pip package. Clone the repository to us
 | Target | Description |
 | --- | --- |
 | `make install` | Create venv, install deps, download and verify model |
-| `make download-model` | Download UNet checkpoint to `models/` if missing |
+| `make download-model` | Download UNet checkpoint to `metrics_petri/models/` and verify SHA-256 |
 | `make model-status` | Check whether the checkpoint is present |
 | `make run-cli INPUT=path/` | Run batch CLI on a folder |
 | `make run-notebook` | Open the example notebook in JupyterLab |
 | `make build-package` | Build wheel and sdist for PyPI |
-| `make publish-pypi` | Upload to PyPI with twine |
+| `make publish-pypi` | Manual PyPI upload with twine; official releases use GitHub Trusted Publishing |
 | `make clean` | Remove venv, caches, build artefacts |
 
 ---

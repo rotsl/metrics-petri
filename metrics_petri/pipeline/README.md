@@ -56,7 +56,7 @@ At start-up the pipeline searches for the checkpoint in this order:
 2. `metrics_petri/models/best_area_w_0.7.pt` relative to the current working
    directory (useful when running from the cloned repo).
 3. The installed package location — `importlib.resources` resolves the bundled file inside the wheel.
-4. HuggingFace Hub auto-download — if none of the above exist, the file is downloaded automatically from `rotsl/grayleafspot-segmentation` and cached locally.
+4. Hugging Face Hub fallback download — if none of the above exist, the pinned checkpoint revision is downloaded, cached locally, and verified against the packaged SHA-256.
 
 The bundled model is `best_area_w_0.7.pt` (SmallUNet, `base_channels=16`, ~23 MB). A normal `pip install "metrics-petri[gui]"` includes it; no separate download is needed.
 
