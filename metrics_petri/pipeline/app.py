@@ -619,6 +619,7 @@ with gr.Blocks(title="metrics-petri Colony Segmentation") as demo:
                     threshold=thresh,
                     dish_size_mm=CONTAINER_MM,
                     device=DEVICE,
+                    seed=None,
                 ),
                 f,
                 indent=2,

@@ -109,11 +109,23 @@ metrics-petri input_images/ --threshold 0.45
 # Calibrate measurements for a 60 mm dish (default: 90 mm)
 metrics-petri input_images/ --dish-size-mm 60
 
+# Set the PyTorch seed recorded in provenance (default: 0)
+metrics-petri input_images/ --seed 123
+
 # Custom model checkpoint
 metrics-petri input_images/ --model /path/to/checkpoint.pt
 ```
 
 The command prints per-image progress and writes a single ZIP when complete.
+
+## Example dataset
+
+The source repository includes three example images in `input_images/06FEB` for
+smoke-testing the full CLI:
+
+```bash
+metrics-petri input_images/06FEB --output /tmp/metrics-petri-06feb.zip --seed 0
+```
 
 ### Auto-discovery of metadata
 

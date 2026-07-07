@@ -13,6 +13,7 @@ def test_build_provenance_contains_run_context():
         threshold=0.42,
         dish_size_mm=60.0,
         device="cpu",
+        seed=123,
     )
 
     assert provenance["created_at_utc"].endswith("Z")
@@ -23,7 +24,7 @@ def test_build_provenance_contains_run_context():
     assert provenance["model"]["sha256"] == (
         "e868313abe5335d60cb92ed3d968b04b80e1c63c7c63ea031699f109d38a840d"
     )
-    assert provenance["settings"] == {"threshold": 0.42, "dish_size_mm": 60.0}
+    assert provenance["settings"] == {"threshold": 0.42, "dish_size_mm": 60.0, "seed": 123}
     assert provenance["runtime"]["device"] == "cpu"
 
 
@@ -54,7 +55,7 @@ def test_cli_archive_includes_provenance_json(monkeypatch, tmp_path):
         lambda df, out_dir: out_dir.mkdir(parents=True, exist_ok=True),
     )
 
-    cli.run_batch(input_dir, output_zip, threshold=0.42, dish_size_mm=60.0)
+    cli.run_batch(input_dir, output_zip, threshold=0.42, dish_size_mm=60.0, seed=123)
 
     with zipfile.ZipFile(output_zip) as zf:
         assert "analysis_full.csv" in zf.namelist()
@@ -63,5 +64,5 @@ def test_cli_archive_includes_provenance_json(monkeypatch, tmp_path):
         provenance = json.loads(zf.read("provenance.json"))
 
     assert provenance["interface"] == "metrics-petri-cli"
-    assert provenance["settings"] == {"threshold": 0.42, "dish_size_mm": 60.0}
+    assert provenance["settings"] == {"threshold": 0.42, "dish_size_mm": 60.0, "seed": 123}
     assert provenance["model"]["sha256"]

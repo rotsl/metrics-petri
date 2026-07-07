@@ -9,10 +9,13 @@ include mkdocs.yml
 include .markdownlint.json
 include Makefile
 include metrics-petri-logo.png
+include mypy.ini
 include package-lock.json
+include pyrightconfig.json
 include requirements.txt
 recursive-include docs *.md
 recursive-include input_images *.gitkeep
+recursive-include input_images/06FEB *.jpg
 recursive-include metrics_petri *.py
 recursive-include metrics_petri *.md
 recursive-include notebooks *.ipynb

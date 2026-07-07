@@ -30,6 +30,7 @@ metrics-petri input_images/ --output results/run01.zip
 metrics-petri input_images/ --metadata input_images/image_metadata.csv
 metrics-petri input_images/ --threshold 0.45
 metrics-petri input_images/ --dish-size-mm 60
+metrics-petri input_images/ --seed 123
 ```
 
 Supplying metadata enables day-coded charts and growth-rate calculations. The
@@ -38,6 +39,20 @@ columns.
 
 Physical measurements default to a 90 mm outside dish diameter. Use `--dish-size-mm`
 with the actual diameter when analysing another dish size.
+The PyTorch seed defaults to `0` and is recorded in `provenance.json`; pass `--seed`
+to document a different reproducibility setting.
+
+## Example dataset
+
+The source repository includes three example images in `input_images/06FEB` for
+smoke-testing and tutorials:
+
+```bash
+metrics-petri input_images/06FEB --output /tmp/metrics-petri-06feb.zip --seed 0
+```
+
+Open the ZIP to inspect `analysis_full.csv`, `analysis_full.json`, `provenance.json`,
+per-image overlays, and growth charts.
 
 ## Crop multi-dish photographs
 

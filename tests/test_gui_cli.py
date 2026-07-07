@@ -1,10 +1,8 @@
 """Tests for safe Gradio GUI command-line defaults."""
 
-import warnings
-
 import pytest
 
-from metrics_petri.pipeline.cli import _warn_if_exposed, build_parser
+from metrics_petri.pipeline.cli import _validate_exposure, build_parser
 
 
 def test_gui_defaults_to_loopback_without_authentication():
@@ -27,14 +25,14 @@ def test_gui_auth_rejects_incomplete_credentials(value):
         build_parser().parse_args(["--auth", value])
 
 
-def test_gui_warns_when_exposed_without_authentication():
-    with pytest.warns(RuntimeWarning, match="without authentication"):
-        _warn_if_exposed("0.0.0.0", None)
+def test_gui_rejects_exposure_without_authentication():
+    with pytest.raises(ValueError, match="without authentication"):
+        _validate_exposure("0.0.0.0", None)
 
 
-def test_gui_does_not_warn_when_exposed_with_authentication():
-    with warnings.catch_warnings(record=True) as warnings_seen:
-        warnings.simplefilter("always")
-        _warn_if_exposed("0.0.0.0", ("researcher", "secret"))
+def test_gui_allows_exposure_with_authentication():
+    _validate_exposure("0.0.0.0", ("researcher", "secret"))
 
-    assert not warnings_seen
+
+def test_gui_allows_loopback_without_authentication():
+    _validate_exposure("127.0.0.1", None)

@@ -102,6 +102,9 @@ metrics-petri input_images/ --threshold 0.45
 # Use the actual outside diameter for non-standard dishes
 metrics-petri input_images/ --dish-size-mm 60
 
+# Set the PyTorch seed recorded in provenance (default: 0)
+metrics-petri input_images/ --seed 123
+
 # Custom model checkpoint
 metrics-petri input_images/ --model /path/to/checkpoint.pt
 ```
@@ -117,6 +120,15 @@ metrics-petri input_images/ --model /path/to/checkpoint.pt
 ├── image_metadata.json       same metadata as JSON
 ├── overlays/                 per-image colony mask composites
 └── charts/                   growth-rate charts (requires dates in metadata)
+```
+
+### Example dataset
+
+The source repository includes three example images under `input_images/06FEB` for
+smoke-testing and tutorials:
+
+```bash
+metrics-petri input_images/06FEB --output /tmp/metrics-petri-06feb.zip --seed 0
 ```
 
 ---

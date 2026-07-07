@@ -8,6 +8,7 @@ Override path with env var UNET_MODEL.
 from __future__ import annotations
 
 import io
+import logging
 import math
 from pathlib import Path
 
@@ -39,6 +40,7 @@ from .model import SmallUNet
 CONTAINER_MM = 90.0
 IMAGE_SIZE = 256
 DEVICE = _select_device()
+logger = logging.getLogger(__name__)
 
 # ── model ──────────────────────────────────────────────────────────────────
 _model: SmallUNet | None = None
@@ -51,7 +53,7 @@ def _resolve_model_path() -> Path:
         return _verify_model_if_managed(p)
     try:
         from huggingface_hub import hf_hub_download
-        print(f"[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…", flush=True)
+        logger.info("Downloading UNet checkpoint from Hugging Face repo %s", _HF_REPO)
         cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE, revision=_HF_REVISION)
         return _verify_model_checksum(Path(cached))
     except ValueError:

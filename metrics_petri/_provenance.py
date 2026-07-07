@@ -26,6 +26,7 @@ def build_provenance(
     threshold: float,
     dish_size_mm: float,
     device: str,
+    seed: int | None = None,
 ) -> dict:
     """Return a JSON-serialisable provenance record for an analysis run."""
     return {
@@ -47,6 +48,7 @@ def build_provenance(
         "settings": {
             "threshold": float(threshold),
             "dish_size_mm": float(dish_size_mm),
+            "seed": seed,
         },
         "runtime": {
             "device": str(device),

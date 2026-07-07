@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MIT
 # pipeline.py — SmallUNet sample analysis using models/best_area_w_0.7.pt
 
+import logging
 import os
 import warnings
 from pathlib import Path
@@ -37,6 +38,7 @@ CONTAINER_MM = 90.0
 IMAGE_SIZE = 256
 MASK_THRESHOLD = float(os.getenv('MASK_THRESHOLD', '0.5'))
 DEVICE = _select_device()
+logger = logging.getLogger(__name__)
 
 
 def _resolve_model_path() -> Path:
@@ -46,7 +48,7 @@ def _resolve_model_path() -> Path:
         return _verify_model_if_managed(p)
     try:
         from huggingface_hub import hf_hub_download
-        print(f'[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…', flush=True)
+        logger.info("Downloading UNet checkpoint from Hugging Face repo %s", _HF_REPO)
         cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE, revision=_HF_REVISION)
         return _verify_model_checksum(Path(cached))
     except ValueError:
@@ -78,7 +80,7 @@ def get_model() -> SmallUNet:
     global _model
     if _model is None:
         model_path = _resolve_model_path()
-        print(f"[UNet] loading {model_path} on {DEVICE}")
+        logger.info("Loading UNet checkpoint %s on %s", model_path, DEVICE)
         m = SmallUNet(in_channels=3, out_channels=1, base_channels=16)
         checkpoint = torch.load(model_path, map_location=DEVICE, weights_only=True)
         state_dict = checkpoint['model_state_dict'] if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint else checkpoint

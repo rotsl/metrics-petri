@@ -122,6 +122,9 @@ metrics-petri input_images/ --threshold 0.45
 
 # Calibrate measurements for a 60 mm dish (default: 90 mm)
 metrics-petri input_images/ --dish-size-mm 60
+
+# Set the PyTorch seed recorded in provenance (default: 0)
+metrics-petri input_images/ --seed 123
 ```
 
 Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, `provenance.json`, per-image overlays, and growth-curve charts with day codes on the x-axis.
@@ -133,8 +136,21 @@ positives, while higher values are stricter and may under-segment faint edges.
 
 The pipeline selects the fastest available accelerator automatically in this order:
 CUDA, Apple MPS, then CPU. Run `metrics-petri doctor` to see which device will be used.
+The batch CLI records the configured seed in `provenance.json`; the default is `0`.
 
 Full CLI documentation: [`metrics_petri/pipelinesam/README.md`](metrics_petri/pipelinesam/README.md)
+
+### Example dataset
+
+The repository includes three example images in [`input_images/06FEB`](input_images/06FEB)
+for smoke-testing the CLI and following tutorials:
+
+```bash
+metrics-petri input_images/06FEB --output /tmp/metrics-petri-06feb.zip --seed 0
+```
+
+The resulting ZIP contains tables, provenance, overlays, and charts generated from the
+same layout used for normal experiments.
 
 ---
 
@@ -223,7 +239,7 @@ metrics-petri/
 ├── notebooks/              # Development notebooks
 │   └── example_metrics-petri.ipynb
 ├── tests/                  # pytest suite (test_metrics.py, test_metadata.py)
-├── input_images/           # Source images (gitignored)
+├── input_images/           # Example images and local input folders
 ├── outputs/                # Analysis outputs (gitignored)
 └── pyproject.toml
 ```

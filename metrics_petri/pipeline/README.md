@@ -43,7 +43,8 @@ metrics-petri-gui --host 0.0.0.0 --auth user:password
 
 !!! warning
     Binding to a non-loopback address exposes uploaded images, results, and GUI actions
-    to the network. The CLI warns when a non-loopback host is used without `--auth`.
+    to the network. The CLI refuses to start on a non-loopback host unless `--auth`
+    is supplied.
 
 ---
 

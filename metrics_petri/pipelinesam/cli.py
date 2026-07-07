@@ -55,6 +55,22 @@ def _positive_float(value: str) -> float:
     return parsed
 
 
+def _non_negative_int(value: str) -> int:
+    """Parse a non-negative integer CLI value."""
+    parsed = int(value)
+    if parsed < 0:
+        raise argparse.ArgumentTypeError("value must be greater than or equal to zero")
+    return parsed
+
+
+def _set_seed(seed: int | None) -> None:
+    """Seed PyTorch when requested to document deterministic inference intent."""
+    if seed is None:
+        return
+    import torch
+    torch.manual_seed(seed)
+
+
 def _pixel_scale(dish_size_mm: float, radius_px: float) -> float:
     """Return millimetres per pixel for a known dish diameter and radius."""
     return (dish_size_mm / 2) / max(radius_px, 1)
@@ -450,7 +466,10 @@ def run_batch(
     threshold: float = 0.5,
     metadata_csv: Path | None = None,
     dish_size_mm: float = DEFAULT_DISH_SIZE_MM,
+    seed: int | None = 0,
 ) -> None:
+    _set_seed(seed)
+
     if metadata_csv and metadata_csv.exists():
         meta_df = _load_metadata(metadata_csv)
         tasks = _build_metadata_tasks(input_dir, meta_df)
@@ -573,6 +592,7 @@ def run_batch(
                 threshold=threshold,
                 dish_size_mm=dish_size_mm,
                 device=DEVICE,
+                seed=seed,
             ),
             indent=2,
         )
@@ -632,6 +652,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_DISH_SIZE_MM,
         help="Outside diameter of the Petri dish in millimetres",
     )
+    parser.add_argument(
+        "--seed",
+        type=_non_negative_int,
+        default=0,
+        help="PyTorch random seed for defensive reproducibility",
+    )
     return parser
 
 
@@ -670,6 +696,7 @@ def main() -> None:
             threshold=args.threshold,
             metadata_csv=metadata_csv,
             dish_size_mm=args.dish_size_mm,
+            seed=args.seed,
         )
     except FileNotFoundError as exc:
         print(f"error: {exc}", file=sys.stderr)

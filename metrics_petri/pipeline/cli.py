@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import os
-import warnings
 
 _LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
 
@@ -18,15 +17,16 @@ def _parse_auth(value: str) -> tuple[str, str]:
     return username, password
 
 
-def _warn_if_exposed(host: str, auth: tuple[str, str] | None) -> None:
-    """Warn when the GUI is exposed beyond loopback without authentication."""
+def _validate_exposure(host: str, auth: tuple[str, str] | None) -> None:
+    """Reject unauthenticated GUI exposure beyond loopback."""
     if host not in _LOOPBACK_HOSTS and auth is None:
-        warnings.warn(
+        raise ValueError(
             f"GUI is binding to non-loopback host {host!r} without authentication; "
-            "use --auth USER:PASS before exposing it to a network",
-            RuntimeWarning,
-            stacklevel=2,
+            "use --auth USER:PASS before exposing it to a network"
         )
+
+
+_warn_if_exposed = _validate_exposure
 
 
 def _importable(mod: str) -> bool:
@@ -130,8 +130,12 @@ def main() -> None:
     if len(sys.argv) > 1 and sys.argv[1] == "doctor":
         _run_doctor()
         return
-    args = build_parser().parse_args()
-    _warn_if_exposed(args.host, args.auth)
+    parser = build_parser()
+    args = parser.parse_args()
+    try:
+        _validate_exposure(args.host, args.auth)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     if args.model:
         os.environ["UNET_MODEL"] = args.model
