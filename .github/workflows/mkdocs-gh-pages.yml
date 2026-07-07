@@ -33,6 +33,26 @@ jobs:
       - name: Install package and documentation dependencies
         run: pip install -e ".[docs]" ruff
 
+      - name: Add documentation footer
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          config = Path("mkdocs.yml")
+          footer = (
+              "copyright: 'This project was designed and developed by "
+              '<a href="https://github.com/rotsl">Rohan R</a> '
+              "at The Sainsbury Laboratory, Norwich'"
+          )
+          lines = [
+              line
+              for line in config.read_text().splitlines()
+              if not line.startswith("copyright:")
+          ]
+          lines.append(footer)
+          config.write_text("\n".join(lines) + "\n")
+          PY
+
       - name: Build documentation
         run: mkdocs build --strict
 

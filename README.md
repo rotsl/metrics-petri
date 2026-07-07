@@ -48,7 +48,7 @@ The repository ships four entry points:
 
 ### Prerequisites
 
-- Python 3.10 or later
+- Python 3.10 through 3.13
 - `make` (standard on macOS/Linux)
 
 ### Clone and install
@@ -298,7 +298,7 @@ MIT — see [`LICENSE`](LICENSE).
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.1.5},
+version = {3.0.0},
 year = {2026}
 }
 ```

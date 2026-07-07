@@ -23,16 +23,12 @@ keywords = [
   "UNet",
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
-  "Intended Audience :: Science/Research",
+  "Development Status :: 5 - Production/Stable",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Topic :: Scientific/Engineering :: Image Recognition",
-  "Topic :: Scientific/Engineering :: Bio-Informatics",
-  "Operating System :: OS Independent",
 ]
 dependencies = [
   "Pillow>=10.0.0,<13",
@@ -146,7 +142,7 @@ exclude_dirs = ["tests", "notebooks", "site", "build", "dist"]
 skips = ["B110", "B112"]
 
 [tool.bumpversion]
-current_version = "2.1.5"
+current_version = "3.0.0"
 parse = '(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
 serialize = ["{major}.{minor}.{patch}"]
 commit = false

@@ -6,132 +6,102 @@ Notable changes to Metrics Petri are documented here.
 
 No unreleased changes yet.
 
-## 2.1.5 - 2026-07-07
-
-### Fixed
-
-- Cap supported Python below 3.14 so installers do not select environments where
-  PyTorch wheels are unavailable.
-- Report stale or mismatched metadata image paths clearly instead of falling through
-  to a generic "No images found" error.
-
-## 2.1.4 - 2026-07-07
-
-### Fixed
-
-- Tighten NumPy, SciPy, and OpenCV dependency bounds to avoid incompatible
-  NumPy 2.x resolver combinations with current PyTorch wheels.
-
-## 2.1.3 - 2026-07-07
+## 3.0.0 - 2026-07-07
 
 ### Added
 
+- Convert the project into the importable `metrics_petri` Python package.
+- Add console scripts for the batch CLI, Gradio GUI, metadata helper, and dish
+  cropper.
+- Add the dish-cropper utility for extracting individual plates from multi-dish
+  images.
+- Add package data for the bundled SmallUNet checkpoint so installed wheels can run
+  without a separate model file in most environments.
+- Add a `--seed` CLI flag and record the configured PyTorch seed in provenance.
+- Add automatic CUDA selection ahead of Apple MPS and CPU fallbacks.
+- Add structural validation for CSV and JSON experiment metadata.
+- Add three example images and pipeline-level smoke tests for real-image CLI
+  behaviour and output archive consistency.
+- Add regression tests for model loading, checkpoint integrity, GUI defaults,
+  metadata paths, metadata schemas, texture metrics, device selection, metadata
+  day-code handling, model architecture wiring, device constants, and compatibility
+  re-exports.
 - Add CodeQL, Bandit, mypy, Pyright, coverage, check-manifest, and
   `metrics-petri doctor` checks to the local and CI validation path.
-- Add a `--seed` CLI flag and record the configured PyTorch seed in provenance.
-- Add three example images plus pipeline-level smoke tests for real-image CLI
-  behaviour and output archive consistency.
-
-### Security
-
-- Refuse unauthenticated Gradio GUI launches on non-loopback hosts.
-- Pin the fallback model-download revision and keep checkpoint SHA-256 verification
-  in the runtime path.
-- Switch the PyPI release workflow to Trusted Publishing, run the validation gate
-  before publishing, and retain built distributions as workflow artifacts.
-- Generate GitHub build-provenance attestations for release wheel and source
-  distribution artifacts.
+- Add CI, PyPI publishing, and GitHub Pages workflows.
+- Add MkDocs Material documentation with a docstring-generated API reference.
+- Add the project logo and expanded project and package documentation.
+- Add a SmallUNet model card covering training provenance, validation metrics,
+  intended use, and limitations.
+- Add a security policy, contribution guide, and Contributor Covenant code of conduct.
+- Add GitHub build-provenance attestations for release wheel and source distribution
+  artifacts.
 
 ### Changed
 
-- Add major-version upper bounds for Pillow, pandas, SciPy, OpenCV, Matplotlib,
-  rawpy, and Hugging Face Hub to reduce untested dependency drift.
-- Run mypy in CI with the active workflow Python version so dependency stubs are
-  parsed with matching syntax support.
-- Install GUI extras during CI and publish validation so pyright can resolve optional
-  GUI and HEIF imports.
-- Remove the obsolete Streamlit metadata UI module and update the legacy pipeline
-  metadata error message to point users at `metrics-petri-metadata`.
+- Move pipeline modules under the `metrics_petri` namespace while preserving
+  end-user CLI entry points.
+- Rework package metadata and dependency declarations in `pyproject.toml`.
+- Use `pyproject.toml` as the single source of dependency declarations.
+- Simplify local installation through `requirements.txt` and Makefile targets.
+- Update documentation for packaged CLI, GUI, notebook, metadata, and dish-cropper
+  workflows.
+- Refresh README and package entry-point instructions.
+- Document the manual changelog policy.
+- Update package metadata, README content, and the PyPI long description for the
+  broader metrics-petri workflow.
+- Calculate entropy and texture standard deviation from colony pixels rather than
+  the entire photograph. Values in these columns are not directly comparable with
+  results from version 2.1.0 and earlier.
+- Resolve the deprecated `MODEL_PATH` compatibility attribute lazily instead of
+  inspecting model paths during module import.
 - Route model-resolution diagnostics through logging while preserving user-facing CLI
   progress output.
-- Document the manual changelog policy and refresh README/package entry-point
-  instructions.
-
-## 2.1.2 - 2026-07-07
+- Remove the obsolete Streamlit metadata UI module and update the legacy pipeline
+  metadata error message to direct users to `metrics-petri-metadata`.
+- Run mypy in CI using the active workflow Python version so dependency stubs are
+  parsed with matching syntax support.
+- Install GUI extras during CI and publish validation so Pyright can resolve optional
+  GUI and HEIF imports.
+- Build releases from the checked-in package version and reject mismatched release
+  tags.
+- Validate built wheel and source distributions with strict Twine checks before
+  upload.
+- Run the complete validation gate before publishing.
+- Retain built distributions as workflow artifacts.
+- Switch the PyPI release workflow to Trusted Publishing.
+- Include the checkpoint, checksum, model card, governance files, and documentation
+  explicitly in source distributions.
+- Add major-version upper bounds for Pillow, pandas, SciPy, OpenCV, Matplotlib,
+  rawpy, Hugging Face Hub, Torch, NumPy, and scikit-image to reduce untested
+  dependency drift.
+- Tighten NumPy, SciPy, and OpenCV dependency bounds to avoid incompatible NumPy 2.x
+  resolver combinations with current PyTorch wheels.
+- Restrict supported Python versions to releases below Python 3.14 so installers do
+  not select environments where compatible PyTorch wheels are unavailable.
+- Report stale or mismatched metadata image paths clearly instead of falling through
+  to a generic "No images found" error.
 
 ### Security
 
 - Load PyTorch checkpoints with `weights_only=True`.
-- Verify the bundled and downloaded model checkpoint against its published SHA-256.
-- Bind the Gradio GUI to loopback by default, add optional authentication, and warn
-  about unauthenticated network exposure.
+- Verify both bundled and downloaded model checkpoints against their published
+  SHA-256 checksums.
+- Pin the fallback model-download revision while retaining runtime checkpoint
+  SHA-256 verification.
+- Bind the Gradio GUI to loopback by default.
+- Add optional Gradio authentication.
+- Refuse unauthenticated Gradio GUI launches on non-loopback hosts.
+- Warn users about unauthenticated network exposure.
 - Remove the remotely accessible in-browser process shutdown control.
-- Confine metadata-referenced images to the selected input directory.
+- Restrict metadata-referenced images to the selected input directory.
 - Pin all GitHub Actions to immutable commit SHAs.
-
-### Added
-
-- Security policy, contribution guide, and Contributor Covenant code of conduct.
-- SmallUNet model card with training provenance, validation metrics, intended use, and
-  limitations.
-- MkDocs Material documentation with a docstring-generated API reference.
-- Structural validation for CSV and JSON experiment metadata.
-- Regression tests for model loading, integrity checks, GUI defaults, metadata paths,
-  metadata schemas, texture metrics, and device selection.
-- Automatic CUDA selection ahead of Apple MPS and CPU fallbacks.
-
-### Changed
-
-- Calculate entropy and texture standard deviation from colony pixels rather than the
-  whole photograph. Values in these two columns are not directly comparable with
-  results from version 2.1.0 and earlier.
-- Resolve the deprecated `MODEL_PATH` compatibility attribute lazily instead of
-  inspecting model paths during module import.
-- Use `pyproject.toml` as the single source of dependency declarations.
-- Build releases from the checked-in package version and reject mismatched release tags.
-- Validate built wheel and source distributions with strict Twine checks before upload.
-- Include the checkpoint, checksum, model card, governance files, and documentation
-  explicitly in source distributions.
-- Add upper bounds for Torch, NumPy, and scikit-image to avoid untested major-version
-  upgrades.
 
 ### Removed
 
-- Unused root `metadata.json` file.
-- Process-wide suppression of dependency `FutureWarning` messages.
-
-## 2.1.0 - 2026-07-03
-
-### Added
-
-- Converted the project into the importable `metrics_petri` Python package with console
-  scripts for the batch CLI, Gradio GUI, metadata helper, and dish cropper.
-- Added package data for the bundled SmallUNet checkpoint so installed wheels can run
-  without a separate model file in most environments.
-- Added initial pytest coverage for metadata day-code handling, model architecture
-  wiring, device constants, and compatibility re-exports.
-- Added CI, PyPI publishing, and GitHub Pages workflow files.
-
-### Changed
-
-- Moved pipeline modules under the `metrics_petri` namespace while keeping CLI entry
-  points for end users.
-- Reworked package metadata and dependency declarations in `pyproject.toml`.
-- Simplified local installation through `requirements.txt` and Makefile targets.
-- Updated documentation for packaged CLI, GUI, notebook, and metadata workflows.
-
-## 2.0.0 - 2026-07-03
-
-### Added
-
-- Added the project logo and expanded project/package documentation.
-- Added the dish-cropper utility for extracting individual plates from multi-dish
-  images.
-- Added MkDocs/GitHub Pages deployment groundwork for hosted documentation.
-
-### Changed
-
-- Updated package metadata, README, and PyPI long description for the broader
-  `metrics-petri` workflow.
-- Refined metadata GUI documentation and example workflow descriptions.
-- Prepared the package for the later namespace-package layout introduced in 2.1.0.
+- Remove the obsolete Streamlit metadata UI module.
+- Remove the unused root `metadata.json` file.
+- Remove process-wide suppression of dependency `FutureWarning` messages.
+- Delete PyPI package releases older than version 2.0.0.
+- Retain version 2.0.0 on PyPI as a yanked release.
+- Delete repository tags and GitHub releases for versions older than 2.0.0.

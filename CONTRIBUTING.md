@@ -25,7 +25,7 @@ Metrics Petri supports Python 3.10 through 3.13.
 ```bash
 git clone https://github.com/rotsl/metrics-petri.git
 cd metrics-petri
-python3 -m venv venv
+python3.12 -m venv venv
 venv/bin/python -m pip install --upgrade pip
 venv/bin/python -m pip install -e ".[test,docs]"
 ```
@@ -103,7 +103,7 @@ hand:
 
 ```bash
 venv/bin/python -m pip install -e ".[release]"
-venv/bin/bump-my-version bump patch
+venv/bin/bump-my-version bump patch  # or minor/major when appropriate
 ```
 
 Before publishing a GitHub Release:
