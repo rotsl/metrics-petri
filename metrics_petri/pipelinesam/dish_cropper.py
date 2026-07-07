@@ -23,14 +23,16 @@ import numpy as np
 # Core Detection Engine
 # ---------------------------------------------------------------------------
 
-def detect_petri_dishes(image_path: str | Path, debug: bool = False):
+def detect_petri_dishes(
+    image_path: str | Path, debug: bool = False
+) -> list[tuple[int, int, int]] | tuple[list[tuple[int, int, int]], np.ndarray]:
     """
     Detect petri dishes in an image using Otsu thresholding + contour analysis.
     Falls back to Hough Circle Transform if Otsu finds too few candidates.
 
     Returns:
-        List of (cx, cy, radius) tuples for each detected full dish.
-        Sorted top-to-bottom, left-to-right (reading order).
+        list[tuple[int, int, int]]: Detected full dishes as `(cx, cy, radius)`
+            tuples, sorted top-to-bottom and left-to-right.
     """
     img = cv2.imread(str(image_path))
     if img is None:
@@ -185,18 +187,22 @@ def detect_petri_dishes(image_path: str | Path, debug: bool = False):
     return final
 
 
-def crop_dish(img: np.ndarray, cx: int, cy: int, r: int, padding: float = 0.05) -> tuple[np.ndarray, tuple[int, int, int, int]]:
+def crop_dish(
+    img: np.ndarray, cx: int, cy: int, r: int, padding: float = 0.05
+) -> tuple[np.ndarray, tuple[int, int, int, int]]:
     """
     Extract a square crop around a detected dish.
 
     Args:
         img: Source BGR image
-        cx, cy: Dish center
+        cx: Dish centre x-coordinate.
+        cy: Dish centre y-coordinate.
         r: Dish radius
         padding: Extra space around dish as fraction of radius (default 5%)
 
     Returns:
-        (cropped_image, (x1, y1, x2, y2))
+        tuple[np.ndarray, tuple[int, int, int, int]]: The cropped image and crop
+            bounds as `(x1, y1, x2, y2)`.
     """
     h, w = img.shape[:2]
     size = int(r * 2 * (1 + padding))

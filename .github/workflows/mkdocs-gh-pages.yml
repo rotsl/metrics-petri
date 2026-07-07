@@ -31,7 +31,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install package and documentation dependencies
-        run: pip install -e ".[docs]"
+        run: pip install -e ".[docs]" ruff
 
       - name: Build documentation
         run: mkdocs build --strict

@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: MIT
 """metrics-petri CLI — batch pipeline without GUI.
 
-Usage:
-    metrics-petri [INPUT_DIR] [--output OUT.zip] [--threshold 0.5]
-                  [--metadata image_metadata.csv] [--model path/to/model.pt]
+Command example:
+    metrics-petri INPUT_DIR --output OUT.zip --threshold 0.5
+    metrics-petri INPUT_DIR --metadata image_metadata.csv --model path/to/model.pt
 """
 
 from __future__ import annotations

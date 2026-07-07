@@ -1,0 +1,1474 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Petri-dish colony segmentation and morphometric analysis">
+      
+      
+      
+        <link rel="canonical" href="https://rotsl.github.io/metrics-petri/batch-pipeline/">
+      
+      
+        <link rel="prev" href="../user-guide/">
+      
+      
+        <link rel="next" href="../model-card/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Batch pipeline - Metrics Petri</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#metrics-petri-cli-batch-pipeline" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Metrics Petri" class="md-header__button md-logo" aria-label="Metrics Petri" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Metrics Petri
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Batch pipeline
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/rotsl/metrics-petri" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rotsl/metrics-petri
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Metrics Petri" class="md-nav__button md-logo" aria-label="Metrics Petri" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Metrics Petri
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/rotsl/metrics-petri" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rotsl/metrics-petri
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch pipeline
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-file-lookup-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model file lookup order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-0-prepare-metadata-optional-but-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 0 — Prepare metadata (optional but recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 0 — Prepare metadata (optional but recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-desktop-gui-metrics-petri-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A — Desktop GUI (metrics-petri-metadata)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-manual-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B — Manual CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running the pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-discovery-of-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-discovery of metadata
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-zip-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output ZIP structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-in-analysis_fullcsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics in analysis_full.csv
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebook walkthrough
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-image-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported image formats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model-card/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model card
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/reporting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/batch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Batch CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/cropper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dish cropper
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Project
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Project
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-of-conduct/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code of Conduct
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#model-file-lookup-order" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model file lookup order
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-0-prepare-metadata-optional-but-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 0 — Prepare metadata (optional but recommended)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step 0 — Prepare metadata (optional but recommended)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-a-desktop-gui-metrics-petri-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option A — Desktop GUI (metrics-petri-metadata)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-b-manual-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option B — Manual CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running the pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running the pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#auto-discovery-of-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Auto-discovery of metadata
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-zip-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output ZIP structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-in-analysis_fullcsv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics in analysis_full.csv
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diagnostics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notebook walkthrough
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#supported-image-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported image formats
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        License
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="metrics-petri-cli-batch-pipeline">metrics-petri — CLI batch pipeline<a class="headerlink" href="#metrics-petri-cli-batch-pipeline" title="Permanent link">&para;</a></h1>
+<p><code>metrics-petri</code> segments and measures fungal colonies (or any biological sample) growing on petri dishes. It processes a folder of images and writes a ZIP archive containing CSV and JSON result tables, <code>provenance.json</code>, per-image overlay composites, and growth-rate charts.</p>
+<p>No browser or GUI required at run time.</p>
+<hr />
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>metrics-petri
+</code></pre></div>
+<p>The package bundles the SmallUNet checkpoint (<code>best_area_w_0.7.pt</code>) inside the wheel. No separate model download is needed after a normal <code>pip install</code>.</p>
+<hr />
+<h2 id="model-file-lookup-order">Model file lookup order<a class="headerlink" href="#model-file-lookup-order" title="Permanent link">&para;</a></h2>
+<p>At start-up the pipeline searches for the checkpoint in this order:</p>
+<ol>
+<li><code>UNET_MODEL</code> environment variable — if set, that path is used directly.</li>
+<li><code>metrics_petri/models/best_area_w_0.7.pt</code> relative to the current working
+   directory (useful when running from the cloned repo).</li>
+<li>The installed package location — <code>importlib.resources</code> resolves the bundled file inside the wheel.</li>
+<li>HuggingFace Hub auto-download — if none of the above exist, the file is downloaded automatically from <code>rotsl/grayleafspot-segmentation</code> and cached locally.</li>
+</ol>
+<p>To use a custom checkpoint:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">UNET_MODEL</span><span class="o">=</span>/path/to/checkpoint.pt<span class="w"> </span>metrics-petri<span class="w"> </span>images/
+<span class="c1"># or</span>
+metrics-petri<span class="w"> </span>images/<span class="w"> </span>--model<span class="w"> </span>/path/to/checkpoint.pt
+</code></pre></div>
+<hr />
+<h2 id="step-0-prepare-metadata-optional-but-recommended">Step 0 — Prepare metadata (optional but recommended)<a class="headerlink" href="#step-0-prepare-metadata-optional-but-recommended" title="Permanent link">&para;</a></h2>
+<p>A metadata file tells the pipeline which experiment each image belongs to, the image date, and the experiment start date. It enables:</p>
+<ul>
+<li>Grouping images into time-series experiments</li>
+<li>Computing relative growth rate (RGR, day⁻¹) and area growth rate (mm² day⁻¹)</li>
+<li>Labelling chart axes with day codes (<code>d01</code>, <code>d02</code>, …)</li>
+</ul>
+<h3 id="option-a-desktop-gui-metrics-petri-metadata">Option A — Desktop GUI (<code>metrics-petri-metadata</code>)<a class="headerlink" href="#option-a-desktop-gui-metrics-petri-metadata" title="Permanent link">&para;</a></h3>
+<p>The package ships a native tkinter desktop app for building the metadata file without writing any code.</p>
+<p><strong>Requirements:</strong> tkinter is part of the Python standard library and is bundled on macOS and Windows. On Linux install it first:</p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>python3-tk<span class="w">   </span><span class="c1"># Debian / Ubuntu</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>python3-tkinter<span class="w">  </span><span class="c1"># Fedora / RHEL</span>
+</code></pre></div>
+<p><strong>Launch:</strong></p>
+<div class="highlight"><pre><span></span><code>metrics-petri-metadata
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>What you do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 — Select Folder</strong></td>
+<td>Browse to the folder containing your petri-dish images. Thumbnails are shown for the first 20 images. Dates are auto-detected from filenames (<code>YYYYMMDD</code>), EXIF <code>DateTimeOriginal</code>, or file modification time.</td>
+</tr>
+<tr>
+<td><strong>2 — Settings</strong></td>
+<td>Enter the experiment name, experiment start date (<code>YYYY-MM-DD</code>), your user name, and the number of plates.</td>
+</tr>
+<tr>
+<td><strong>3 — Review &amp; Edit Dates</strong></td>
+<td>A table lists every image with its auto-detected date and computed day code. Click any row to edit its date or set an optional reminder (<code>YYYY-MM-DD HH:MM</code>). Day codes update automatically when dates change.</td>
+</tr>
+<tr>
+<td><strong>4 — Export</strong></td>
+<td>Click <strong>Export All</strong> to write <code>image_metadata.csv</code>, <code>image_metadata.json</code>, and (if any reminders were set) <code>reminders.ics</code> into the same folder as the images.</td>
+</tr>
+</tbody>
+</table>
+<p>After export you will have <code>image_metadata.csv</code> ready to pass to the CLI.</p>
+<h3 id="option-b-manual-csv">Option B — Manual CSV<a class="headerlink" href="#option-b-manual-csv" title="Permanent link">&para;</a></h3>
+<p>Create <code>image_metadata.csv</code> with these columns (extras are ignored):</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Format</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image_path</code></td>
+<td>filename only, e.g. <code>plate01.jpg</code></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>experiment_name</code></td>
+<td>string</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>experiment_date</code></td>
+<td><code>YYYY-MM-DD</code></td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>image_date</code></td>
+<td><code>YYYY-MM-DD</code></td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>day_code</code></td>
+<td><code>dNN</code>, e.g. <code>d03</code></td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>user_name</code></td>
+<td>string</td>
+<td>no</td>
+</tr>
+<tr>
+<td><code>plates_count</code></td>
+<td>integer</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>A JSON array with the same keys is also accepted (<code>image_metadata.json</code>).</p>
+<hr />
+<h2 id="running-the-pipeline">Running the pipeline<a class="headerlink" href="#running-the-pipeline" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Analyse all images in a folder (no metadata)</span>
+metrics-petri<span class="w"> </span>input_images/
+
+<span class="c1"># With metadata CSV — enables growth rate calculations and day-code charts</span>
+metrics-petri<span class="w"> </span>input_images/<span class="w"> </span>--metadata<span class="w"> </span>input_images/image_metadata.csv
+
+<span class="c1"># JSON metadata is also accepted</span>
+metrics-petri<span class="w"> </span>input_images/<span class="w"> </span>--metadata<span class="w"> </span>input_images/image_metadata.json
+
+<span class="c1"># Write the ZIP to a specific path</span>
+metrics-petri<span class="w"> </span>input_images/<span class="w"> </span>--output<span class="w"> </span>results/run01.zip
+
+<span class="c1"># Adjust segmentation confidence threshold (default 0.5)</span>
+metrics-petri<span class="w"> </span>input_images/<span class="w"> </span>--threshold<span class="w"> </span><span class="m">0</span>.45
+
+<span class="c1"># Calibrate measurements for a 60 mm dish (default: 90 mm)</span>
+metrics-petri<span class="w"> </span>input_images/<span class="w"> </span>--dish-size-mm<span class="w"> </span><span class="m">60</span>
+
+<span class="c1"># Custom model checkpoint</span>
+metrics-petri<span class="w"> </span>input_images/<span class="w"> </span>--model<span class="w"> </span>/path/to/checkpoint.pt
+</code></pre></div>
+<p>The command prints per-image progress and writes a single ZIP when complete.</p>
+<h3 id="auto-discovery-of-metadata">Auto-discovery of metadata<a class="headerlink" href="#auto-discovery-of-metadata" title="Permanent link">&para;</a></h3>
+<p>If <code>--metadata</code> is not given, the CLI looks for <code>image_metadata.json</code> and then <code>image_metadata.csv</code> inside the image folder automatically.</p>
+<hr />
+<h2 id="output-zip-structure">Output ZIP structure<a class="headerlink" href="#output-zip-structure" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>&lt;user_or_experiment_name&gt;.zip
+├── analysis_full.csv         one row per image, all metrics
+├── analysis_full.json        same data as a JSON array
+├── provenance.json           run settings, versions, device, and model checksum
+├── image_metadata.csv        copy of the input metadata (if supplied)
+├── image_metadata.json       same metadata as JSON
+├── overlays/
+│   ├── image01_overlay.jpg   raw image + dish circle + colony mask
+│   └── ...
+└── charts/
+    ├── area_mm2.png          colony area over time
+    ├── diameter_mm.png
+    ├── edge_roughness.png
+    ├── crack_coverage_pct.png
+    └── ...                   one chart per key metric (requires dates)
+</code></pre></div>
+<p>The ZIP is named from the <code>user_name</code> field in the metadata (e.g. <code>rex.zip</code>), falling back to <code>experiment_name</code>, then <code>analysis.zip</code>.</p>
+<hr />
+<h2 id="metrics-in-analysis_fullcsv">Metrics in analysis_full.csv<a class="headerlink" href="#metrics-in-analysis_fullcsv" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Unit</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>area_mm2</code></td>
+<td>mm²</td>
+<td>Colony area</td>
+</tr>
+<tr>
+<td><code>diameter_mm</code></td>
+<td>mm</td>
+<td>Equivalent circle diameter</td>
+</tr>
+<tr>
+<td><code>perimeter_mm</code></td>
+<td>mm</td>
+<td>Colony perimeter</td>
+</tr>
+<tr>
+<td><code>eccentricity</code></td>
+<td>—</td>
+<td>Shape elongation (0 = circle, 1 = line)</td>
+</tr>
+<tr>
+<td><code>edge_roughness</code></td>
+<td>—</td>
+<td>Perimeter / ideal-circle perimeter</td>
+</tr>
+<tr>
+<td><code>centre_delta_mm</code></td>
+<td>mm</td>
+<td>Offset of colony centroid from dish centre</td>
+</tr>
+<tr>
+<td><code>texture_std</code></td>
+<td>—</td>
+<td>Standard deviation of pixel intensities</td>
+</tr>
+<tr>
+<td><code>entropy</code></td>
+<td>bits</td>
+<td>Shannon entropy of pixel intensities</td>
+</tr>
+<tr>
+<td><code>crack_px</code></td>
+<td>px</td>
+<td>Crack area in pixels</td>
+</tr>
+<tr>
+<td><code>crack_area_mm2</code></td>
+<td>mm²</td>
+<td>Crack area in physical units</td>
+</tr>
+<tr>
+<td><code>crack_coverage_pct</code></td>
+<td>%</td>
+<td>Crack area as percentage of colony area</td>
+</tr>
+<tr>
+<td><code>crack_count</code></td>
+<td>—</td>
+<td>Number of discrete crack regions</td>
+</tr>
+<tr>
+<td><code>hyph_frangi_mm</code></td>
+<td>mm</td>
+<td>Hyphal length (Frangi filter)</td>
+</tr>
+<tr>
+<td><code>hyph_meijering_mm</code></td>
+<td>mm</td>
+<td>Hyphal length (Meijering filter)</td>
+</tr>
+<tr>
+<td><code>hyph_hybrid_mm</code></td>
+<td>mm</td>
+<td>Hyphal length (hybrid filter)</td>
+</tr>
+<tr>
+<td><code>rgr_per_day</code></td>
+<td>day⁻¹</td>
+<td>Relative growth rate (requires dates)</td>
+</tr>
+<tr>
+<td><code>relative_growth_per_day</code></td>
+<td>mm² day⁻¹</td>
+<td>Absolute area growth rate (requires dates)</td>
+</tr>
+</tbody>
+</table>
+<p>Scale is derived from the detected dish circumference and the configured outside dish
+diameter. The default is 90 mm; pass <code>--dish-size-mm</code> when using another size. No
+separate calibration target is required.</p>
+<hr />
+<h2 id="diagnostics">Diagnostics<a class="headerlink" href="#diagnostics" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>metrics-petri<span class="w"> </span>doctor
+</code></pre></div>
+<p>Prints Python version, NumPy version, Torch version and accelerator, model path, and dependency health. Exits with code 1 if any issue is found.</p>
+<hr />
+<h2 id="notebook-walkthrough">Notebook walkthrough<a class="headerlink" href="#notebook-walkthrough" title="Permanent link">&para;</a></h2>
+<p>An interactive notebook (<code>notebooks/example_metrics-petri.ipynb</code>) is available in the <a href="https://github.com/rotsl/metrics-petri">GitHub repository</a>. It traces the full pipeline — mask inference, dish detection, crack analysis, and growth metrics — with inline plots at each step.</p>
+<p>The notebook is not distributed with the pip package. Clone the repo and run:</p>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>run-notebook
+</code></pre></div>
+<hr />
+<h2 id="supported-image-formats">Supported image formats<a class="headerlink" href="#supported-image-formats" title="Permanent link">&para;</a></h2>
+<p>JPEG, PNG, TIFF, BMP, WebP. The pipeline resizes each image to 256 × 256 for the neural network and then maps measurements back to physical units using the detected dish circumference.</p>
+<hr />
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Python ≥ 3.10</li>
+<li>PyTorch ≥ 2.1 (CPU is fine; MPS is used automatically on Apple Silicon)</li>
+<li>tkinter — stdlib, bundled on macOS/Windows; <code>sudo apt install python3-tk</code> on Linux</li>
+</ul>
+<p>All pip-installable dependencies are installed automatically with <code>pip install metrics-petri</code>.</p>
+<hr />
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p>MIT. See <a href="https://github.com/rotsl/metrics-petri/blob/main/LICENSE">LICENSE</a> for the full text.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

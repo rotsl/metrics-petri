@@ -1,5 +1,11 @@
 # metrics-petri
 
+[![PyPI](https://img.shields.io/pypi/v/metrics-petri?style=flat-square&logo=pypi&label=PyPI)](https://pypi.org/project/metrics-petri/)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/metrics-petri?style=flat-square&logo=rocket&label=Python)
+![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square)
+[![CI](https://img.shields.io/github/actions/workflow/status/rotsl/metrics-petri/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/rotsl/metrics-petri/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/github/actions/workflow/status/rotsl/metrics-petri/mkdocs-gh-pages.yml?branch=main&style=flat-square&label=Docs)](https://github.com/rotsl/metrics-petri/actions/workflows/mkdocs-gh-pages.yml)
+
 Petri dish colony segmentation and morphometric analysis.
 
 `metrics-petri` measures how a biological sample grows on a petri dish: area, diameter, edge roughness, crack burden, texture entropy, and time-series growth rates — all in physical units calibrated from the dish geometry.
