@@ -6,6 +6,13 @@ Notable changes to Metrics Petri are documented here.
 
 No unreleased changes yet.
 
+## 2.1.4 - 2026-07-07
+
+### Fixed
+
+- Tighten NumPy, SciPy, and OpenCV dependency bounds to avoid incompatible
+  NumPy 2.x resolver combinations with current PyTorch wheels.
+
 ## 2.1.3 - 2026-07-07
 
 ### Added

@@ -66,17 +66,17 @@ present, and verifies the checkpoint SHA-256 before use.
 ### Install from PyPI
 
 ```bash
-python3.12 -m venv petrienv
+python3 -m venv petrienv
 source petrienv/bin/activate
-pip install --upgrade pip
-pip install metrics-petri
+python -m pip install --upgrade pip
+python -m pip install metrics-petri
 ```
 
 PyTorch is pulled in automatically. For a CPU-only install without CUDA drivers:
 
 ```bash
-pip install torch --index-url https://download.pytorch.org/whl/cpu
-pip install metrics-petri
+python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+python -m pip install metrics-petri
 ```
 
 ### Model checkpoint
@@ -295,7 +295,7 @@ MIT — see [`LICENSE`](LICENSE).
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.1.3},
+version = {2.1.4},
 year = {2026}
 }
 ```

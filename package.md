@@ -72,10 +72,10 @@ At run time the checkpoint is located in this order:
 ## CLI batch pipeline
 
 ```bash
-python3.12 -m venv petrienv
+python3 -m venv petrienv
 source petrienv/bin/activate
-pip install --upgrade pip
-pip install metrics-petri
+python -m pip install --upgrade pip
+python -m pip install metrics-petri
 metrics-petri input_images/
 ```
 
@@ -244,7 +244,7 @@ MIT — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICENSE)
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
-version = {2.1.3},
+version = {2.1.4},
 year = {2026}
 }
 ```
