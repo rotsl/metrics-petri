@@ -50,6 +50,14 @@ Avoid committing large datasets or new checkpoints without prior discussion. Tra
 data contributions must include their source, licence, annotation method, and any usage
 restrictions.
 
+## Changelog policy
+
+User-visible changes should update `CHANGELOG.md` in the same pull request. This
+project currently keeps a manual changelog instead of using towncrier or reno because
+the release volume is small and direct review keeps the release notes readable. If
+changelog drift becomes common, revisit fragment-per-PR tooling before the next minor
+release.
+
 ## Validation
 
 Run the test suite from the repository root:

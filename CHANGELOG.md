@@ -4,7 +4,30 @@ Notable changes to Metrics Petri are documented here.
 
 ## Unreleased
 
-No unreleased changes yet.
+### Added
+
+- Add CodeQL, Bandit, mypy, Pyright, coverage, check-manifest, and
+  `metrics-petri doctor` checks to the local and CI validation path.
+- Add a `--seed` CLI flag and record the configured PyTorch seed in provenance.
+- Add three example images plus pipeline-level smoke tests for real-image CLI
+  behaviour and output archive consistency.
+
+### Security
+
+- Refuse unauthenticated Gradio GUI launches on non-loopback hosts.
+- Pin the fallback model-download revision and keep checkpoint SHA-256 verification
+  in the runtime path.
+
+### Changed
+
+- Add major-version upper bounds for Pillow, pandas, SciPy, OpenCV, Matplotlib,
+  rawpy, and Hugging Face Hub to reduce untested dependency drift.
+- Remove the obsolete Streamlit metadata UI module and update the legacy pipeline
+  metadata error message to point users at `metrics-petri-metadata`.
+- Route model-resolution diagnostics through logging while preserving user-facing CLI
+  progress output.
+- Document the manual changelog policy and refresh README/package entry-point
+  instructions.
 
 ## 2.1.2 - 2026-07-07
 

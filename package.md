@@ -45,11 +45,12 @@ Petri dish colony segmentation and morphometric analysis.
 
 ---
 
-## Three entry points, one package
+## Four entry points, one package
 
 | Entry point | Install | Use |
 | ----------- | ------- | --- |
 | `metrics-petri` | `pip install metrics-petri` | CLI batch pipeline |
+| `metrics-petri-gui` | `pip install "metrics-petri[gui]"` | Browser-based analysis GUI; public network binding requires `--auth` |
 | `metrics-petri-metadata` | `pip install metrics-petri` | Desktop GUI for building `image_metadata.csv` |
 | `metrics-petri-crop` | `pip install metrics-petri` | CLI crop multi-dish images into per-dish PNGs |
 
@@ -239,7 +240,7 @@ MIT — [full text](https://github.com/rotsl/metrics-petri/blob/main/LICENSE)
 ## Citation
 
 ```bibtex
-@software{Rohan_R_Metrics_Petri_petri_2026,
+@software{Rohan_R_Metrics_Petri,
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},

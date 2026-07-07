@@ -241,7 +241,7 @@ def main():
     from metrics_petri.pipelinesam.cli import _build_metadata_tasks, _load_metadata
 
     if not METADATA_CSV.exists():
-        raise FileNotFoundError(f"Missing {METADATA_CSV} — run input.py first")
+        raise FileNotFoundError(f"Missing {METADATA_CSV} — run metrics-petri-metadata first")
 
     meta_df = _load_metadata(METADATA_CSV)
     tasks = _build_metadata_tasks(IMG_DIR, meta_df)

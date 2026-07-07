@@ -35,16 +35,16 @@ classifiers = [
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "Pillow>=10.0.0",
-  "pandas>=2.0.0",
+  "Pillow>=10.0.0,<13",
+  "pandas>=2.0.0,<4",
   "torch>=2.1.0,<3",
   "scikit-image>=0.22.0,<1",
-  "scipy>=1.11.0",
+  "scipy>=1.11.0,<2",
   "numpy>=1.24.0,<3",
-  "opencv-python-headless>=4.8.0",
-  "matplotlib>=3.7.0",
-  "rawpy>=0.21.0",
-  "huggingface_hub>=0.20.0",
+  "opencv-python-headless>=4.8.0,<5",
+  "matplotlib>=3.7.0,<4",
+  "rawpy>=0.21.0,<1",
+  "huggingface_hub>=0.20.0,<2",
 ]
 
 [project.optional-dependencies]
@@ -124,16 +124,12 @@ module = [
   "metrics_petri.pipeline.app",
   "metrics_petri.pipelinesam.dish_cropper",
   "metrics_petri.pipelinesam.image_metadata_gui",
-  "metrics_petri.pipelinesam.input",
 ]
 ignore_errors = true
 
 [tool.coverage.run]
 branch = true
 source = ["metrics_petri"]
-omit = [
-  "metrics_petri/pipelinesam/input.py",
-]
 
 [tool.coverage.report]
 show_missing = true

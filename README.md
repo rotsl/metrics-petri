@@ -33,11 +33,12 @@ flowchart TD
 
 `metrics-petri-metadata` is optional — `metrics-petri` can run on images alone, but supplying metadata enables growth-rate calculations and day-coded charts.
 
-The repository ships three entry points:
+The repository ships four entry points:
 
 | Entry point | Install | Use |
 | --- | --- | --- |
 | `metrics-petri` | `pip install metrics-petri` | CLI batch pipeline |
+| `metrics-petri-gui` | `pip install "metrics-petri[gui]"` | Browser-based analysis GUI; public network binding requires `--auth` |
 | `metrics-petri-metadata` | `pip install metrics-petri` | Desktop GUI for building `image_metadata.csv` |
 | `metrics-petri-crop` | `pip install metrics-petri` | CLI crop multi-dish images into per-dish PNGs |
 
@@ -208,7 +209,7 @@ The notebook is not distributed with the pip package. Clone the repository to us
 
 | Target | Description |
 | --- | --- |
-| `make install` | Create venv, install deps, download model |
+| `make install` | Create venv, install deps, download and verify model |
 | `make download-model` | Download UNet checkpoint to `models/` if missing |
 | `make model-status` | Check whether the checkpoint is present |
 | `make run-cli INPUT=path/` | Run batch CLI on a folder |
@@ -238,7 +239,7 @@ metrics-petri/
 │       └── best_area_w_0.7.pt.sha256
 ├── notebooks/              # Development notebooks
 │   └── example_metrics-petri.ipynb
-├── tests/                  # pytest suite (test_metrics.py, test_metadata.py)
+├── tests/                  # pytest suite, including CLI and example-pipeline coverage
 ├── input_images/           # Example images and local input folders
 ├── outputs/                # Analysis outputs (gitignored)
 └── pyproject.toml
@@ -290,7 +291,7 @@ and security issues should be reported according to [`SECURITY.md`](SECURITY.md)
 MIT — see [`LICENSE`](LICENSE).
 
 ```bibtex
-@software{Rohan_R_Metrics_Petri_petri_2026,
+@software{Rohan_R_Metrics_Petri,
 author = {{Rohan R}},
 title = {{Metrics Petri: petri dish colony segmentation and morphometric analysis}},
 url = {https://github.com/rotsl/metrics-petri},
