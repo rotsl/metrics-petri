@@ -27,6 +27,7 @@ from metrics_petri._model import _select_device
 from metrics_petri._paths import (
     _HF_FILE,
     _HF_REPO,
+    _HF_REVISION,
     _find_model_path,
     _verify_model_checksum,
     _verify_model_if_managed,
@@ -51,7 +52,7 @@ def _resolve_model_path() -> Path:
     try:
         from huggingface_hub import hf_hub_download
         print(f"[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…", flush=True)
-        cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE)
+        cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE, revision=_HF_REVISION)
         return _verify_model_checksum(Path(cached))
     except ValueError:
         raise
@@ -77,8 +78,8 @@ def load_model() -> SmallUNet:
     return _model
 
 
-def infer_mask(img_pil: Image.Image, threshold: float = 0.5) -> tuple[np.ndarray, np.ndarray]:
-    """Return (overlay_rgb, binary_mask_uint8) for a PIL image."""
+def infer_mask(img_pil: Image.Image, threshold: float = 0.5) -> tuple[Image.Image, Image.Image]:
+    """Return overlay and binary mask images for a PIL image."""
     model = load_model()
     img_arr = np.array(img_pil.convert("RGB"))
     resized = cv2.resize(img_arr, (IMAGE_SIZE, IMAGE_SIZE))

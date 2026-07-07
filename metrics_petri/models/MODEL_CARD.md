@@ -20,9 +20,13 @@ representative sample of all fungal species, culture media, plate formats, camer
 lighting conditions.
 
 The published training data and annotations are released under the Apache License 2.0.
-That licence applies to the distributed corpus; users remain responsible for confirming
-that their downstream data collection and use comply with applicable consent,
-institutional, and biosafety requirements.
+They are maintained in the companion training repository at
+<https://github.com/rotsl/petrimodel>, which includes the training data, LabelMe JSON
+annotations, trained checkpoints, sweep plots, and a PySide6 desktop tool for reviewing
+manual diameter measurements against model-generated masks. That licence applies to the
+distributed corpus; users remain responsible for confirming that their downstream data
+collection and use comply with applicable consent, institutional, and biosafety
+requirements.
 
 ## Training procedure and hyperparameters
 
@@ -47,9 +51,11 @@ stored in the distributed checkpoint and are therefore not asserted here.
 Checkpoint selection used a held-out validation partition of the same manually
 annotated Petri-dish image corpus. Validation masks were not used for gradient updates.
 The distributed artifact does not record the partition size, image identifiers, split
-strategy, or whether plates from the same experimental series were grouped. These
-omissions limit independent assessment of leakage and uncertainty; comparisons should
-reuse a documented, plate-level split and report sample counts.
+file, or whether plates from the same experimental series were grouped. Related
+training and evaluation materials are documented in the companion training repository,
+but this package does not publish the exact validation image IDs. These omissions limit
+independent assessment of leakage and uncertainty; comparisons should reuse a
+documented, plate-level split and report sample counts.
 
 ## Validation metrics
 

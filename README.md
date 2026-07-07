@@ -58,7 +58,9 @@ cd metrics-petri
 make install        # create venv, install deps, verify model checkpoint
 ```
 
-`make install` creates a virtual environment, installs Python dependencies, and downloads the UNet checkpoint to `models/best_area_w_0.7.pt` if it is not already present.
+`make install` creates a virtual environment, installs Python dependencies, downloads the
+UNet checkpoint to `metrics_petri/models/best_area_w_0.7.pt` if it is not already
+present, and verifies the checkpoint SHA-256 before use.
 
 ### Install from PyPI
 
@@ -78,7 +80,13 @@ pip install metrics-petri
 
 ### Model checkpoint
 
-The checkpoint `models/best_area_w_0.7.pt` is tracked in this repository and downloaded automatically by `make install`. It was trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a companion repository that trains and evaluates the SmallUNet on annotated petri-dish images, hosts the LabelMe JSON annotations and sweep plots, and includes a PySide6 desktop tool for manual diameter validation against model-generated masks.
+The checkpoint `metrics_petri/models/best_area_w_0.7.pt` is tracked in this repository
+and downloaded automatically by `make install`. The bundled and downloaded checkpoint
+is verified against `metrics_petri/models/best_area_w_0.7.pt.sha256` before use. It was
+trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a
+companion repository that trains and evaluates the SmallUNet on annotated petri-dish
+images, hosts the LabelMe JSON annotations and sweep plots, and includes a PySide6
+desktop tool for manual diameter validation against model-generated masks.
 
 To fetch the checkpoint independently:
 
@@ -109,7 +117,7 @@ metrics-petri input_images/ --output results/run01.zip
 # Supply experiment metadata for growth rate calculations
 metrics-petri input_images/ --metadata input_images/image_metadata.csv
 
-# Adjust segmentation threshold
+# Adjust segmentation threshold (default: 0.5)
 metrics-petri input_images/ --threshold 0.45
 
 # Calibrate measurements for a 60 mm dish (default: 90 mm)
@@ -117,6 +125,14 @@ metrics-petri input_images/ --dish-size-mm 60
 ```
 
 Output is a single ZIP containing `analysis_full.csv`, `analysis_full.json`, `provenance.json`, per-image overlays, and growth-curve charts with day codes on the x-axis.
+
+For neural-network inference, images are resized internally to `256 × 256` RGB and the
+predicted mask is mapped back to the source image. The default mask-confidence
+threshold is `0.5`; lower values can include weaker colony signal but may add false
+positives, while higher values are stricter and may under-segment faint edges.
+
+The pipeline selects the fastest available accelerator automatically in this order:
+CUDA, Apple MPS, then CPU. Run `metrics-petri doctor` to see which device will be used.
 
 Full CLI documentation: [`metrics_petri/pipelinesam/README.md`](metrics_petri/pipelinesam/README.md)
 
@@ -201,8 +217,9 @@ metrics-petri/
 │   │   ├── dish_cropper.py
 │   │   ├── image_metadata_gui.py
 │   │   └── model_small_unet.py
-│   └── models/             # UNet checkpoint (bundled in wheel)
-│       └── best_area_w_0.7.pt
+│   └── models/             # UNet checkpoint and checksum (bundled in wheel)
+│       ├── best_area_w_0.7.pt
+│       └── best_area_w_0.7.pt.sha256
 ├── notebooks/              # Development notebooks
 │   └── example_metrics-petri.ipynb
 ├── tests/                  # pytest suite (test_metrics.py, test_metadata.py)

@@ -6,8 +6,18 @@ include SECURITY.md
 include CONTRIBUTING.md
 include CODE_OF_CONDUCT.md
 include mkdocs.yml
+include .markdownlint.json
+include Makefile
+include metrics-petri-logo.png
+include package-lock.json
+include requirements.txt
 recursive-include docs *.md
+recursive-include input_images *.gitkeep
 recursive-include metrics_petri *.py
+recursive-include metrics_petri *.md
+recursive-include notebooks *.ipynb
+recursive-include outputs *.gitkeep
+recursive-include tests *.py
 include metrics_petri/models/__init__.py
 include metrics_petri/models/MODEL_CARD.md
 include metrics_petri/models/best_area_w_0.7.pt

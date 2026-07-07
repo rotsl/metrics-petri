@@ -5,6 +5,8 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      MPLCONFIGDIR: .mplconfig
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
@@ -17,4 +19,9 @@ jobs:
         run: sudo apt-get install -y python3-tk
       - run: pip install -e ".[test]"
       - run: ruff check .
-      - run: pytest
+      - run: mypy metrics_petri
+      - run: pyright
+      - run: metrics-petri doctor
+      - run: pytest --cov=metrics_petri --cov-report=term-missing
+      - run: bandit -c pyproject.toml -r metrics_petri
+      - run: check-manifest --no-build-isolation

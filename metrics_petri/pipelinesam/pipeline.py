@@ -21,6 +21,7 @@ from metrics_petri._paths import (
     _DEFAULT_MODEL_CANDIDATES,
     _HF_FILE,
     _HF_REPO,
+    _HF_REVISION,
     _find_model_path,
     _verify_model_checksum,
     _verify_model_if_managed,
@@ -46,7 +47,7 @@ def _resolve_model_path() -> Path:
     try:
         from huggingface_hub import hf_hub_download
         print(f'[UNet] downloading checkpoint from HuggingFace ({_HF_REPO})…', flush=True)
-        cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE)
+        cached = hf_hub_download(repo_id=_HF_REPO, filename=_HF_FILE, revision=_HF_REVISION)
         return _verify_model_checksum(Path(cached))
     except ValueError:
         raise

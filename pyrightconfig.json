@@ -1,0 +1,25 @@
+{
+  "include": ["metrics_petri"],
+  "exclude": [
+    "**/__pycache__",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+    "site",
+    "notebooks",
+    "metrics_petri/pipeline/app.py",
+    "metrics_petri/pipelinesam/dish_cropper.py",
+    "metrics_petri/pipelinesam/image_metadata_gui.py",
+    "metrics_petri/pipelinesam/input.py"
+  ],
+  "pythonVersion": "3.10",
+  "venvPath": ".",
+  "venv": "venv",
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": false,
+  "reportAttributeAccessIssue": false,
+  "reportOperatorIssue": false,
+  "reportCallIssue": false,
+  "reportArgumentType": false
+}

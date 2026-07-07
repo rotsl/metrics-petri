@@ -57,7 +57,7 @@ Petri dish colony segmentation and morphometric analysis.
 
 ## Model checkpoint
 
-The package bundles the SmallUNet checkpoint (`best_area_w_0.7.pt`, ~23 MB) inside the wheel. No separate download is needed after `pip install`. The model was trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a companion repository covering training, annotation, sweep evaluation, and manual diameter validation against model-generated masks.
+The package bundles the SmallUNet checkpoint (`best_area_w_0.7.pt`, ~23 MB) inside the wheel. No separate download is needed after `pip install`. The bundled and downloaded checkpoint is verified against its packaged SHA-256 before use. The model was trained and validated using [**petrimodel**](https://github.com/rotsl/petrimodel) — a companion repository covering training, annotation, sweep evaluation, and manual diameter validation against model-generated masks.
 
 At run time the checkpoint is located in this order:
 
@@ -81,6 +81,11 @@ metrics-petri input_images/
 Processes every image in the folder and writes a ZIP containing result tables,
 provenance, overlays, and charts.
 
+Images are resized internally to `256 × 256` RGB for SmallUNet inference, then the mask
+is mapped back to the source image. The default mask-confidence threshold is `0.5`;
+lower values can include weaker colony signal but may add false positives, while higher
+values are stricter and may under-segment faint edges.
+
 ```bash
 # With metadata for growth rate calculations and day-code charts
 metrics-petri input_images/ --metadata input_images/image_metadata.csv
@@ -91,7 +96,7 @@ metrics-petri input_images/ --metadata input_images/image_metadata.json
 # Custom output path
 metrics-petri input_images/ --output results/run01.zip
 
-# Adjust segmentation threshold (default 0.5)
+# Adjust segmentation threshold (default: 0.5)
 metrics-petri input_images/ --threshold 0.45
 
 # Use the actual outside diameter for non-standard dishes
@@ -194,6 +199,8 @@ metrics-petri doctor
 ```
 
 Checks Python, NumPy, Torch, accelerator (MPS/CUDA/CPU), model path, and all dependencies. Exits with code 1 on any issue.
+
+At run time the pipeline selects CUDA first when available, then Apple MPS, then CPU.
 
 ---
 

@@ -51,8 +51,36 @@ No unreleased changes yet.
 
 ## 2.1.0 - 2026-07-03
 
-Historical change details were not recorded for this release.
+### Added
+
+- Converted the project into the importable `metrics_petri` Python package with console
+  scripts for the batch CLI, Gradio GUI, metadata helper, and dish cropper.
+- Added package data for the bundled SmallUNet checkpoint so installed wheels can run
+  without a separate model file in most environments.
+- Added initial pytest coverage for metadata day-code handling, model architecture
+  wiring, device constants, and compatibility re-exports.
+- Added CI, PyPI publishing, and GitHub Pages workflow files.
+
+### Changed
+
+- Moved pipeline modules under the `metrics_petri` namespace while keeping CLI entry
+  points for end users.
+- Reworked package metadata and dependency declarations in `pyproject.toml`.
+- Simplified local installation through `requirements.txt` and Makefile targets.
+- Updated documentation for packaged CLI, GUI, notebook, and metadata workflows.
 
 ## 2.0.0 - 2026-07-03
 
-Historical change details were not recorded for this release.
+### Added
+
+- Added the project logo and expanded project/package documentation.
+- Added the dish-cropper utility for extracting individual plates from multi-dish
+  images.
+- Added MkDocs/GitHub Pages deployment groundwork for hosted documentation.
+
+### Changed
+
+- Updated package metadata, README, and PyPI long description for the broader
+  `metrics-petri` workflow.
+- Refined metadata GUI documentation and example workflow descriptions.
+- Prepared the package for the later namespace-package layout introduced in 2.1.0.

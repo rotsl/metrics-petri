@@ -55,7 +55,18 @@ restrictions.
 Run the test suite from the repository root:
 
 ```bash
-MPLCONFIGDIR=.mplconfig venv/bin/python -m pytest
+MPLCONFIGDIR=.mplconfig venv/bin/python -m pytest --cov=metrics_petri --cov-report=term-missing
+```
+
+Run static checks:
+
+```bash
+venv/bin/python -m ruff check .
+venv/bin/python -m mypy metrics_petri
+venv/bin/pyright
+venv/bin/bandit -c pyproject.toml -r metrics_petri
+venv/bin/check-manifest --no-build-isolation
+venv/bin/metrics-petri doctor
 ```
 
 For documentation changes, build the site in strict mode:
@@ -72,6 +83,26 @@ venv/bin/python -m build
 
 All relevant checks should pass before a pull request is submitted. If a check cannot
 run in your environment, explain why in the pull request.
+
+## Release checklist
+
+Release metadata must stay in sync across the package, citation files, and user-facing
+documentation. Use the configured version-bump helper instead of editing one file by
+hand:
+
+```bash
+venv/bin/python -m pip install -e ".[release]"
+venv/bin/bump-my-version bump patch
+```
+
+Before publishing a GitHub Release:
+
+- verify `metrics_petri/__init__.py`, `CITATION.cff`, `README.md`, and `package.md`
+  all contain the new version;
+- run tests, strict docs build, and package build checks;
+- include the official model checkpoint SHA-256 from
+  `metrics_petri/models/best_area_w_0.7.pt.sha256` in the GitHub Release notes; and
+- confirm the release tag matches `metrics_petri.__version__`.
 
 ## Pull requests
 

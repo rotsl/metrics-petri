@@ -243,7 +243,7 @@ class MetadataApp(tk.Tk):
             return self.thumb_cache[path]
         try:
             im = Image.open(path)
-            im.thumbnail(THUMB_SIZE, Image.LANCZOS)
+            im.thumbnail(THUMB_SIZE, Image.Resampling.LANCZOS)
         except Exception:
             im = Image.new("RGB", THUMB_SIZE, (200, 200, 200))
         photo = ImageTk.PhotoImage(im)

@@ -77,7 +77,7 @@ def load_as_pil(path: str) -> Image.Image:
 def make_thumbnail(p: str) -> Image.Image:
     try:
         im = load_as_pil(p)
-        im.thumbnail(THUMB_SIZE, Image.LANCZOS)
+        im.thumbnail(THUMB_SIZE, Image.Resampling.LANCZOS)
         return im
     except Exception:
         return Image.new("RGB", THUMB_SIZE, (200, 200, 200))

@@ -8,6 +8,7 @@ from pathlib import Path
 
 _HF_REPO = "rotsl/grayleafspot-segmentation"
 _HF_FILE = "best_area_w_0.7.pt"
+_HF_REVISION = "bcfdee245829863246851a062b4d1aca9cfe8eaa"
 _MODEL_CHECKSUM_PATH = Path(__file__).resolve().parent / "models" / f"{_HF_FILE}.sha256"
 
 _DEFAULT_MODEL_CANDIDATES = [
