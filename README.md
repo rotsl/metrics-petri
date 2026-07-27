@@ -7,7 +7,6 @@
 ![PyPI - License](https://img.shields.io/pypi/l/metrics-petri?style=flat-square&logo=docsify&logoColor=hsl&link=https%3A%2F%2Fgithub.com%2Frotsl%2Fmetrics-petri%2Fblob%2Fmain%2FLICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/rotsl/metrics-petri/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/rotsl/metrics-petri/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/github/actions/workflow/status/rotsl/metrics-petri/mkdocs-gh-pages.yml?branch=main&style=flat-square&label=Docs)](https://github.com/rotsl/metrics-petri/actions/workflows/mkdocs-gh-pages.yml)
-[![pip-audit](https://img.shields.io/github/actions/workflow/status/rotsl/metrics-petri/pip-audit.yml?branch=main&style=flat-square&label=pip-audit)](https://github.com/rotsl/metrics-petri/actions/workflows/pip-audit.yml)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/metrics-petri?period=total&units=INTERNATIONAL_SYSTEM&left_color=YELLOW&right_color=RED&left_text=downloads)](https://pepy.tech/projects/metrics-petri)
 [![Documentation](https://img.shields.io/website?url=https%3A%2F%2Frotsl.github.io%2Fmetrics-petri%2F&up_message=Documentation&up_color=red&logoColor=violet&labelColor=blue&color=green)](https://rotsl.github.io/metrics-petri/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21628852.svg)](https://doi.org/10.5281/zenodo.21628852)
