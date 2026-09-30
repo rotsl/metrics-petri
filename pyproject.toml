@@ -40,7 +40,7 @@ dependencies = [
   "opencv-python-headless>=4.8.0,<4.12",
   "matplotlib>=3.7.0,<4",
   "rawpy>=0.21.0,<1",
-  "huggingface_hub>=0.20.0,<2",
+  "huggingface_hub>=0.20.0,<3",
 ]
 
 [project.optional-dependencies]
